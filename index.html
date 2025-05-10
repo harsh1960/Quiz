@@ -42,6 +42,33 @@
       background: #2980b9;
     }
 
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .nav-btn {
+      background: #3498db;
+      border: none;
+      color: white;
+      font-size: 20px;
+      padding: 6px 14px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .nav-btn:disabled {
+      background: #ccc;
+      cursor: default;
+    }
+
+    .nav-btn:hover:enabled {
+      background: #2980b9;
+    }
+
     .question-box h3 {
       margin-bottom: 15px;
       font-size: 20px;
@@ -66,12 +93,12 @@
 
     #score-box {
       text-align: center;
-      font-size: 22px;
+      font-size: 20px;
       color: #2ecc71;
       margin-top: 20px;
     }
 
-    .back-btn {
+    .back-btn, .submit-btn {
       background: #95a5a6;
       color: white;
       padding: 12px;
@@ -79,11 +106,15 @@
       border-radius: 6px;
       cursor: pointer;
       width: 100%;
-      margin-top: 20px;
+      margin-top: 15px;
+    }
+
+    .submit-btn {
+      background: #27ae60;
     }
 
     @media (max-width: 480px) {
-      .quiz-item, .option-btn, .back-btn {
+      .quiz-item, .option-btn, .back-btn, .submit-btn {
         font-size: 16px;
         padding: 12px;
       }
@@ -94,6 +125,11 @@
 
       h1, h2 {
         font-size: 20px;
+      }
+
+      .nav-btn {
+        font-size: 16px;
+        padding: 6px 10px;
       }
     }
   </style>
@@ -106,9 +142,14 @@
   </div>
 
   <div class="quiz-box" id="quiz-box" style="display: none;">
-    <h2 id="quiz-title"></h2>
+    <div class="quiz-header">
+      <button class="nav-btn" id="prevBtn">&lt;</button>
+      <h2 id="quiz-title"></h2>
+      <button class="nav-btn" id="nextBtn">&gt;</button>
+    </div>
     <p id="quiz-description"></p>
     <div class="question-box" id="question-box"></div>
+    <button class="submit-btn" id="submitBtn" style="display: none;">Submit Quiz</button>
     <div id="score-box"></div>
     <button class="back-btn" onclick="goBack()">Back to Quizzes</button>
   </div>
@@ -135,10 +176,16 @@
     const quizDesc = document.getElementById("quiz-description");
     const questionBox = document.getElementById("question-box");
     const scoreBox = document.getElementById("score-box");
+    const submitBtn = document.getElementById("submitBtn");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
 
     let currentQuiz = null;
     let currentIndex = 0;
     let score = 0;
+    let attempted = 0;
+    let answered = [];
+    let selectedOptions = [];
 
     async function loadQuizzes() {
       const querySnapshot = await getDocs(collection(db, "quizzes"));
@@ -157,6 +204,9 @@
       currentQuiz = docSnap.data();
       currentIndex = 0;
       score = 0;
+      attempted = 0;
+      answered = Array(currentQuiz.questions.length).fill(false);
+      selectedOptions = Array(currentQuiz.questions.length).fill(null);
 
       quizListDiv.style.display = "none";
       quizBox.style.display = "block";
@@ -168,22 +218,49 @@
 
     function showQuestion() {
       const q = currentQuiz.questions[currentIndex];
-      questionBox.innerHTML = `
-        <h3>Q${currentIndex + 1}: ${q.question}</h3>
-        ${q.options.map(opt => `
-          <button class="option-btn" onclick="checkAnswer(this, '${opt.replace(/'/g, "\\'")}', '${q.answer.replace(/'/g, "\\'")}')">${opt}</button>
-        `).join("")}
-      `;
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === currentQuiz.questions.length - 1;
+      submitBtn.style.display = currentIndex === currentQuiz.questions.length - 1 ? "block" : "none";
+
+      questionBox.innerHTML = `<h3>Q${currentIndex + 1}: ${q.question}</h3>`;
+
+      q.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.textContent = opt;
+
+        if (answered[currentIndex]) {
+          btn.disabled = true;
+          if (opt === selectedOptions[currentIndex]) {
+            if (opt === q.answer) {
+              btn.style.backgroundColor = "#2ecc71";
+              btn.style.color = "white";
+            } else {
+              btn.style.backgroundColor = "#e74c3c";
+              btn.style.color = "white";
+            }
+          }
+          if (opt === q.answer && opt !== selectedOptions[currentIndex]) {
+            btn.style.backgroundColor = "#2ecc71";
+            btn.style.color = "white";
+          }
+        } else {
+          btn.onclick = () => checkAnswer(btn, opt, q.answer);
+        }
+
+        questionBox.appendChild(btn);
+      });
     }
 
     window.checkAnswer = function (btn, selected, correct) {
       const allBtns = document.querySelectorAll(".option-btn");
       allBtns.forEach(b => b.disabled = true);
 
+      if (!answered[currentIndex]) attempted++;
       if (selected === correct) {
         btn.style.backgroundColor = "#2ecc71";
         btn.style.color = "white";
-        score++;
+        if (!answered[currentIndex]) score++;
       } else {
         btn.style.backgroundColor = "#e74c3c";
         btn.style.color = "white";
@@ -195,25 +272,49 @@
         });
       }
 
+      answered[currentIndex] = true;
+      selectedOptions[currentIndex] = selected;
+
       setTimeout(() => {
-        currentIndex++;
-        if (currentIndex < currentQuiz.questions.length) {
+        if (currentIndex < currentQuiz.questions.length - 1) {
+          currentIndex++;
           showQuestion();
-        } else {
-          questionBox.innerHTML = "";
-          scoreBox.innerHTML = `You scored <strong>${score}</strong> out of <strong>${currentQuiz.questions.length}</strong>!`;
         }
       }, 1000);
+    };
+
+    prevBtn.onclick = () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        showQuestion();
+      }
+    };
+
+    nextBtn.onclick = () => {
+      if (currentIndex < currentQuiz.questions.length - 1) {
+        currentIndex++;
+        showQuestion();
+      }
+    };
+
+    submitBtn.onclick = () => {
+      questionBox.innerHTML = "";
+      submitBtn.style.display = "none";
+      scoreBox.innerHTML = `
+        <p>Total Questions: <strong>${currentQuiz.questions.length}</strong></p>
+        <p>Attempted: <strong>${attempted}</strong></p>
+        <p>Correct Answers: <strong>${score}</strong></p>
+      `;
     };
 
     window.goBack = function () {
       quizBox.style.display = "none";
       quizListDiv.style.display = "block";
       questionBox.innerHTML = "";
+      scoreBox.innerHTML = "";
     };
 
     loadQuizzes();
   </script>
-
 </body>
-</html>
+      </html>
