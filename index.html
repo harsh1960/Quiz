@@ -57,6 +57,7 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      transition: 0.3s;
     }
 
     .option-btn:hover {
@@ -120,7 +121,7 @@
       apiKey: "AIzaSyDm788npk4qw9RcT7qevq2HPH5-DbSTq2k",
       authDomain: "location-45133.firebaseapp.com",
       projectId: "location-45133",
-      storageBucket: "location-45133.firebasestorage.app",
+      storageBucket: "location-45133.appspot.com",
       messagingSenderId: "938504563570",
       appId: "1:938504563570:web:a4741a9f52b9795f304beb"
     };
@@ -170,22 +171,39 @@
       questionBox.innerHTML = `
         <h3>Q${currentIndex + 1}: ${q.question}</h3>
         ${q.options.map(opt => `
-          <button class="option-btn" onclick="checkAnswer('${opt}')">${opt}</button>
+          <button class="option-btn" onclick="checkAnswer(this, '${opt.replace(/'/g, "\\'")}', '${q.answer.replace(/'/g, "\\'")}')">${opt}</button>
         `).join("")}
       `;
     }
 
-    window.checkAnswer = function (selected) {
-      const correct = currentQuiz.questions[currentIndex].answer;
-      if (selected === correct) score++;
+    window.checkAnswer = function (btn, selected, correct) {
+      const allBtns = document.querySelectorAll(".option-btn");
+      allBtns.forEach(b => b.disabled = true);
 
-      currentIndex++;
-      if (currentIndex < currentQuiz.questions.length) {
-        showQuestion();
+      if (selected === correct) {
+        btn.style.backgroundColor = "#2ecc71";
+        btn.style.color = "white";
+        score++;
       } else {
-        questionBox.innerHTML = "";
-        scoreBox.innerHTML = `You scored <strong>${score}</strong> out of <strong>${currentQuiz.questions.length}</strong>!`;
+        btn.style.backgroundColor = "#e74c3c";
+        btn.style.color = "white";
+        allBtns.forEach(b => {
+          if (b.textContent === correct) {
+            b.style.backgroundColor = "#2ecc71";
+            b.style.color = "white";
+          }
+        });
       }
+
+      setTimeout(() => {
+        currentIndex++;
+        if (currentIndex < currentQuiz.questions.length) {
+          showQuestion();
+        } else {
+          questionBox.innerHTML = "";
+          scoreBox.innerHTML = `You scored <strong>${score}</strong> out of <strong>${currentQuiz.questions.length}</strong>!`;
+        }
+      }, 1000);
     };
 
     window.goBack = function () {
