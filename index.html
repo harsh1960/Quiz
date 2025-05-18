@@ -10,12 +10,11 @@
     body {
       font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
       background: #f0f4f8;
-      padding: 0; /* Body padding removed, header will manage top space if needed */
+      padding: 0;
       color: #333;
       line-height: 1.6;
     }
-    /* Main site heading moved into .app-header */
-    h2 { /* Keeping general h2 styling */
+    h2 {
       text-align: center;
       margin-bottom: 20px;
       color: #2c3e50;
@@ -29,7 +28,7 @@
       padding: 12px 20px;
       background-color: #ffffff;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      position: sticky; /* Make header sticky */
+      position: sticky;
       top: 0;
       left: 0;
       width: 100%;
@@ -42,45 +41,34 @@
       margin: 0;
       flex-grow: 1;
       text-align: center;
-      font-weight: 600; /* Slightly bolder */
+      font-weight: 600;
     }
 
     .header-icon {
-      width: 44px; /* Increased size slightly */
+      width: 44px;
       height: 44px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      font-size: 1.4rem; /* Adjusted for new size */
+      font-size: 1.4rem;
       font-weight: bold;
       cursor: pointer;
       transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
       flex-shrink: 0;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.15); /* Subtle shadow for icons */
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
     }
     .header-icon:hover {
-      transform: scale(1.08); /* Slightly more pop on hover */
+      transform: scale(1.08);
     }
 
-    #leaderboard-icon-container {
-      background-color: #e67e22; /* Orange/Amber */
-    }
-    #leaderboard-icon-container:hover {
-      background-color: #d35400;
-    }
+    #leaderboard-icon-container { background-color: #e67e22; }
+    #leaderboard-icon-container:hover { background-color: #d35400; }
+    #profile-icon-container { background-color: #5dade2; }
+    #profile-icon-container:hover { background-color: #3498db; }
 
-    #profile-icon-container {
-      background-color: #5dade2; /* Light blue */
-    }
-     #profile-icon-container:hover {
-      background-color: #3498db;
-    }
-
-    .content-wrapper { /* Added wrapper for content below sticky header */
-        padding: 15px;
-    }
+    .content-wrapper { padding: 15px; }
 
     .quiz-list, .quiz-box, .login-box, .leaderboard-box, .profile-dashboard {
       max-width: 600px;
@@ -107,13 +95,18 @@
     .quiz-item:hover { background: #2980b9; transform: translateY(-2px); }
 
     .quiz-header {
-      display: flex;
-      justify-content: space-between;
+      display: flex; /* Kept for alignment if other elements were to be added */
+      justify-content: center; /* Center the title */
       align-items: center;
       margin-bottom: 15px;
     }
+    #quiz-title { /* Ensure title is centered if it's the only element */
+        flex-grow: 1;
+        text-align: center;
+    }
 
-    .nav-btn, .action-btn {
+
+    .nav-btn, .action-btn { /* General action button style */
       background: #3498db;
       border: none;
       color: white;
@@ -124,13 +117,21 @@
       transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    .nav-btn {
+    /* .nav-btn was for old prev/next, can be removed if not used elsewhere */
+    /* .nav-btn {
         font-size: 1.25rem;
         padding: 8px 15px;
         border-radius: 50%;
+    } */
+    .action-btn:disabled { /* More specific for .action-btn */
+        background: #bdc3c7;
+        color: #7f8c8d;
+        cursor: default;
+        box-shadow: none;
+        opacity: 0.7;
     }
-    .nav-btn:disabled, .action-btn:disabled { background: #bdc3c7; cursor: default; box-shadow: none; }
-    .nav-btn:hover:enabled, .action-btn:hover:enabled { background: #2980b9; box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+    .action-btn:hover:enabled { background: #2980b9; box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+
 
     .question-box h3 { margin-bottom: 18px; font-size: 1.2rem; color: #34495e; }
 
@@ -152,31 +153,42 @@
     .option-btn.correct { background-color: #2ecc71 !important; color: white !important; border-color: #27ae60 !important; }
     .option-btn.incorrect { background-color: #e74c3c !important; color: white !important; border-color: #c0392b !important; }
 
-
     #score-box { text-align: center; font-size: 1.2rem; margin-top: 25px; }
     #score-box p { margin-bottom: 8px; }
     #score-box strong { color: #27ae60; }
 
-
-    .back-btn, .submit-btn, .leaderboard-nav-btn {
+    .back-btn, .submit-btn, #newNextBtnQuiz { /* Added #newNextBtnQuiz here for common properties */
       padding: 12px 20px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      width: auto;
-      margin-top: 10px;
+      width: auto; /* Will be overridden by .button-container button if full width needed */
+      margin-top: 10px; /* Kept for spacing if flex gap isn't enough or direction changes */
       font-size: 1rem;
       transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      color: white; /* Assuming all these buttons have white text */
     }
-    .back-btn { background: #95a5a6; color: white; }
+    .back-btn { background: #95a5a6; }
     .back-btn:hover { background: #7f8c8d; box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
-
-    .submit-btn { background: #27ae60; color: white; }
+    .submit-btn { background: #27ae60; }
     .submit-btn:hover { background: #229954; box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
 
-    .leaderboard-nav-btn { background: #e67e22; color: white; } /* Style might be redundant now */
-    .leaderboard-nav-btn:hover { background: #d35400; box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+    /* New Next Button Specific Styles */
+    #newNextBtnQuiz {
+        background-color: #e67e22; /* Orange/Amber */
+    }
+    #newNextBtnQuiz:hover:not(:disabled) {
+        background-color: #d35400; /* Darker orange/amber */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    /* Disabled state for newNextBtnQuiz will be handled by .action-btn:disabled or specific override if needed */
+     #newNextBtnQuiz:disabled {
+        background-color: #bdc3c7; /* Ensure it matches general disabled style */
+        opacity: 0.7;
+        cursor: default;
+        box-shadow: none;
+    }
 
 
     #progress-container {
@@ -203,111 +215,120 @@
         box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
         outline: none;
     }
-
-    .login-box .action-btn, #register-form .action-btn {
-      width: 100%;
-      padding: 14px;
-      margin-top: 15px;
-    }
-
-    #auth-toggle, #register-form p {
-        text-align: center;
-        margin-top: 20px;
-        font-size: 0.9rem;
-    }
-    #auth-toggle a, #register-form a {
-        color: #3498db;
-        text-decoration: none;
-        font-weight: bold;
-    }
+    .login-box .action-btn, #register-form .action-btn { width: 100%; padding: 14px; margin-top: 15px; }
+    #auth-toggle, #register-form p { text-align: center; margin-top: 20px; font-size: 0.9rem; }
+    #auth-toggle a, #register-form a { color: #3498db; text-decoration: none; font-weight: bold; }
     #auth-toggle a:hover, #register-form a:hover { text-decoration: underline; }
 
-    .leaderboard-box table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    .leaderboard-box th, .leaderboard-box td {
-      border: 1px solid #e0e0e0;
-      padding: 12px 15px;
-      text-align: left;
-      font-size: 0.95rem;
-    }
-    .leaderboard-box th {
-      background-color: #3498db;
-      color: white;
-      font-size: 1rem;
-    }
+    .leaderboard-box table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    .leaderboard-box th, .leaderboard-box td { border: 1px solid #e0e0e0; padding: 12px 15px; text-align: left; font-size: 0.95rem; }
+    .leaderboard-box th { background-color: #3498db; color: white; font-size: 1rem; }
     .leaderboard-box tr:nth-child(even) { background-color: #f8f9fa; }
     .leaderboard-box tr:hover { background-color: #e9ecef; }
     .leaderboard-box td:first-child { font-weight: bold; text-align: center; }
 
-    .profile-info p {
-        font-size: 1.05rem;
-        margin-bottom: 12px;
-        color: #333;
-    }
-    .profile-info strong {
-        color: #2c3e50;
-        margin-right: 8px;
-    }
-    .profile-info span {
-        color: #3498db;
-    }
+    .profile-info p { font-size: 1.05rem; margin-bottom: 12px; color: #333; }
+    .profile-info strong { color: #2c3e50; margin-right: 8px; }
+    .profile-info span { color: #3498db; }
 
+    .button-container { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+    .button-container button { width: 100%; }
 
-    .button-container {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-top: 20px;
+    /* Custom Modal Styles (assuming these are fine from previous version) */
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background-color: rgba(0, 0, 0, 0.6); display: none;
+        justify-content: center; align-items: center; z-index: 2000;
+        opacity: 0; transition: opacity 0.3s ease;
     }
-    .button-container button {
-        width: 100%;
+    .modal-overlay.active { display: flex; opacity: 1; }
+    .modal {
+        background: #ffffff; padding: 0; border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3); min-width: 320px;
+        max-width: 90%; width: 480px; text-align: left;
+        transform: scale(0.9); opacity: 0;
+        transition: transform 0.3s ease, opacity 0.3s ease; overflow: hidden;
     }
+    .modal-overlay.active .modal { transform: scale(1); opacity: 1; }
+    .modal-header {
+        padding: 15px 20px; border-bottom: 1px solid #e9ecef;
+        display: flex; justify-content: space-between; align-items: center;
+        background-color: #f8f9fa;
+    }
+    .modal-header h3 { margin: 0; font-size: 1.2rem; color: #343a40; }
+    .modal-close-btn {
+        background: transparent; border: none; font-size: 1.75rem;
+        font-weight: bold; color: #6c757d; cursor: pointer;
+        line-height: 1; padding: 0 5px;
+    }
+    .modal-close-btn:hover { color: #343a40; }
+    .modal.modal-info .modal-header { border-left: 5px solid #5dade2; }
+    .modal.modal-success .modal-header { border-left: 5px solid #2ecc71; }
+    .modal.modal-error .modal-header { border-left: 5px solid #e74c3c; }
+    .modal.modal-confirm .modal-header { border-left: 5px solid #e67e22; }
+    .modal-body { padding: 20px 25px; font-size: 1rem; color: #495057; line-height: 1.6; }
+    .modal-footer {
+        padding: 15px 20px; border-top: 1px solid #e9ecef;
+        display: flex; justify-content: flex-end; gap: 10px; background-color: #f8f9fa;
+    }
+    .modal-action-btn {
+        padding: 10px 20px; border: none; border-radius: 6px;
+        font-size: 0.95rem; font-weight: 500; cursor: pointer;
+        transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    #modal-ok-btn { background-color: #3498db; color: white; }
+    #modal-ok-btn:hover { background-color: #2980b9; }
+    #modal-confirm-btn { background-color: #27ae60; color: white; }
+    #modal-confirm-btn:hover { background-color: #229954; }
+    #modal-cancel-btn { background-color: #95a5a6; color: white; }
+    #modal-cancel-btn:hover { background-color: #7f8c8d; }
+
 
     @media (min-width: 450px) {
-        .button-container {
-            flex-direction: row;
-            justify-content: center;
-        }
-        .button-container button {
-            width: auto;
-        }
+        .button-container { flex-direction: row; justify-content: center; }
+        .button-container button { width: auto; } /* Allows buttons to size to content on wider screens */
     }
 
     @media (max-width: 640px) {
       h2 { font-size: 1.3rem; }
-      .app-header h1 { font-size: 1.4rem; } /* Responsive header title */
+      .app-header h1 { font-size: 1.4rem; }
       .header-icon { width: 40px; height: 40px; font-size: 1.2rem; }
       .app-header { padding: 10px 15px; }
-
-
       .content-wrapper { padding: 10px; }
       .quiz-list, .quiz-box, .login-box, .leaderboard-box, .profile-dashboard { padding: 15px; margin: 15px auto; }
       .quiz-item { font-size: 1rem; padding: 12px 15px; }
       .option-btn { padding: 12px; font-size: 0.95rem;}
-      .back-btn, .submit-btn { padding: 10px 15px; font-size: 0.95rem; }
-      .nav-btn { font-size: 1.1rem; padding: 7px 13px; }
+      .back-btn, .submit-btn, #newNextBtnQuiz { padding: 10px 15px; font-size: 0.95rem; }
+      /* .nav-btn removed */
       .leaderboard-box th, .leaderboard-box td { padding: 10px; font-size: 0.9rem;}
       .login-box input, #register-form input { padding: 12px; font-size: 0.95rem;}
       .login-box .action-btn, #register-form .action-btn { padding: 12px; }
       .profile-info p { font-size: 1rem; }
+      .modal { width: 90%; }
+      .button-container button { width: 100%; } /* Ensure buttons are full width on smaller screens */
+    }
+     @media (min-width: 450px) and (max-width: 640px) { /* Explicitly set auto width for this range if needed for button container items */
+        .button-container button { width: auto; }
     }
 
-    @media (max-width: 380px) { /* Very small screens */
+
+    @media (max-width: 380px) {
         .app-header h1 { font-size: 1.2rem; }
         .header-icon { width: 36px; height: 36px; font-size: 1.1rem; }
         .app-header { padding: 8px 10px; }
-
         .content-wrapper { padding: 10px; }
         .quiz-list, .quiz-box, .login-box, .leaderboard-box, .profile-dashboard { padding: 10px; }
         .quiz-item { font-size: 0.95rem; margin: 10px 0; }
         .quiz-header { margin-bottom: 10px; }
+        #quiz-title { font-size: 1.2rem; }
         .question-box h3 { font-size: 1.1rem; margin-bottom: 12px; }
         #progress-container { margin-bottom: 20px; }
-        .nav-btn { font-size: 1rem; padding: 6px 10px; }
+        /* .nav-btn removed */
         .profile-info p { font-size: 0.95rem; }
+        .modal-header h3 { font-size: 1.1rem;}
+        .modal-body {padding: 15px 20px; font-size: 0.9rem;}
+        .modal-footer { padding: 10px 15px;}
+        .modal-action-btn {padding: 8px 15px; font-size: 0.9rem;}
     }
   </style>
 </head>
@@ -321,7 +342,8 @@
         <span id="profile-initial">U</span> </div>
   </header>
 
-  <div class="content-wrapper"> <div class="login-box" id="login-box">
+  <div class="content-wrapper">
+      <div class="login-box" id="login-box">
         <h2>Login</h2>
         <input type="email" id="email" placeholder="Email Address" autocomplete="email" />
         <input type="password" id="password" placeholder="Password" autocomplete="current-password" />
@@ -341,20 +363,19 @@
 
       <div class="quiz-list" id="quiz-list" style="display: none;">
         <h2>Select a Quiz</h2>
-        <div id="quiz-items-container">
-            </div>
-        </div>
+        <div id="quiz-items-container"></div>
+      </div>
 
       <div class="quiz-box" id="quiz-box" style="display: none;">
         <div class="quiz-header">
-          <button class="nav-btn" id="prevBtn" aria-label="Previous Question">&lt;</button>
-          <h2 id="quiz-title"></h2> <button class="nav-btn" id="nextBtn" aria-label="Next Question">&gt;</button>
+          <h2 id="quiz-title" style="flex-grow: 1; text-align: center;"></h2>
         </div>
         <p id="quiz-description"></p>
         <div id="progress-container"><div id="progress-bar"></div></div>
         <div class="question-box" id="question-box"></div>
         <div id="score-box"></div>
         <div class="button-container" id="quiz-action-buttons">
+            <button class="action-btn" id="newNextBtnQuiz" style="display: none;">Next Question</button>
             <button class="submit-btn" id="submitBtn" style="display: none;">Submit Quiz</button>
             <button class="back-btn" id="backToQuizzesBtn" onclick="goBackToQuizList()">Back to Quizzes</button>
         </div>
@@ -363,15 +384,8 @@
       <div class="leaderboard-box" id="leaderboard-box" style="display: none;">
         <h2>Leaderboard</h2>
         <table id="leaderboard-table">
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>Name</th>
-              <th>Total Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            </tbody>
+          <thead><tr><th>Rank</th><th>Name</th><th>Total Score</th></tr></thead>
+          <tbody></tbody>
         </table>
         <div class="button-container">
             <button class="back-btn" onclick="goBackToQuizListFromLeaderboard()">Back to Quizzes</button>
@@ -391,7 +405,26 @@
           <button class="back-btn" onclick="goBackToQuizListFromProfile()">Back to Quizzes</button>
         </div>
       </div>
-  </div> <script type="module">
+  </div>
+
+  <div id="custom-modal-overlay" class="modal-overlay">
+    <div id="custom-modal" class="modal">
+      <div class="modal-header">
+        <h3 id="modal-title">Notification</h3>
+        <button id="modal-close-btn" class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="modal-message"></p>
+      </div>
+      <div class="modal-footer" id="modal-footer">
+        <button id="modal-cancel-btn" class="modal-action-btn" style="display:none;">Cancel</button>
+        <button id="modal-ok-btn" class="modal-action-btn">OK</button>
+        <button id="modal-confirm-btn" class="modal-action-btn" style="display:none;">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
     import {
       getFirestore, collection, getDocs, doc, getDoc, addDoc, setDoc, query, where
@@ -424,7 +457,7 @@
 
     const loginBox = document.getElementById("login-box");
     const quizListBox = document.getElementById("quiz-list");
-    const quizItemsContainer = document.getElementById("quiz-items-container"); // New
+    const quizItemsContainer = document.getElementById("quiz-items-container");
     const quizBox = document.getElementById("quiz-box");
     const leaderboardBox = document.getElementById("leaderboard-box");
     const profileDashboardBox = document.getElementById("profile-dashboard");
@@ -446,34 +479,80 @@
     const progressBarElement = document.getElementById("progress-bar");
     const questionBoxDiv = document.getElementById("question-box");
     const scoreBoxDiv = document.getElementById("score-box");
-    const prevBtn = document.getElementById("prevBtn");
-    const nextBtn = document.getElementById("nextBtn");
+    // Old prevBtn and nextBtn removed
+    const newNextBtnQuiz = document.getElementById("newNextBtnQuiz"); // New Next button for quiz
     const submitBtn = document.getElementById("submitBtn");
     const backToQuizzesBtn = document.getElementById("backToQuizzesBtn");
+
 
     const profileNameSpan = document.getElementById("profile-name");
     const profileEmailSpan = document.getElementById("profile-email");
     const profileQuizzesTakenSpan = document.getElementById("profile-quizzes-taken");
     const profileOverallScoreSpan = document.getElementById("profile-overall-score");
 
-    // Attach event listeners for header icons
+    // Modal DOM Elements (assuming these are fine from previous version)
+    const modalOverlay = document.getElementById('custom-modal-overlay');
+    const modalElement = document.getElementById('custom-modal');
+    const modalTitleElement = document.getElementById('modal-title');
+    const modalMessageElement = document.getElementById('modal-message');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+    const modalOkBtn = document.getElementById('modal-ok-btn');
+    const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+    const modalCancelBtn = document.getElementById('modal-cancel-btn');
+
+    let modalOnOkCallback = null;
+    let modalOnConfirmCallback = null;
+    let modalOnCancelCallback = null;
+
+    function closeModal() {
+        modalOverlay.classList.remove('active');
+        modalElement.classList.remove('modal-info', 'modal-success', 'modal-error', 'modal-confirm');
+        setTimeout(() => {
+            if (!modalOverlay.classList.contains('active')) {
+                modalOnOkCallback = null;
+                modalOnConfirmCallback = null;
+                modalOnCancelCallback = null;
+            }
+        }, 300);
+    }
+
+    function showCustomModal(message, title = 'Notification', type = 'info', onOk = null, onConfirm = null, onCancel = null) {
+        modalMessageElement.innerHTML = message;
+        modalTitleElement.textContent = title;
+        modalElement.classList.remove('modal-info', 'modal-success', 'modal-error', 'modal-confirm');
+        modalElement.classList.add(`modal-${type}`);
+        modalOkBtn.style.display = 'none';
+        modalConfirmBtn.style.display = 'none';
+        modalCancelBtn.style.display = 'none';
+        modalOnOkCallback = onOk;
+        modalOnConfirmCallback = onConfirm;
+        modalOnCancelCallback = onCancel;
+
+        if (type === 'confirm') {
+            modalConfirmBtn.style.display = 'inline-block';
+            modalCancelBtn.style.display = 'inline-block';
+        } else {
+            modalOkBtn.style.display = 'inline-block';
+        }
+        modalOverlay.classList.add('active');
+    }
+
+    modalCloseBtn.onclick = closeModal;
+    modalOverlay.onclick = (event) => { if (event.target === modalOverlay) closeModal(); };
+    modalOkBtn.onclick = () => { closeModal(); if (modalOnOkCallback) modalOnOkCallback(); };
+    modalConfirmBtn.onclick = () => { closeModal(); if (modalOnConfirmCallback) modalOnConfirmCallback(); };
+    modalCancelBtn.onclick = () => { closeModal(); if (modalOnCancelCallback) modalOnCancelCallback(); };
+
     leaderboardIconContainer.onclick = () => showLeaderboard();
     profileIconContainer.onclick = () => showProfileDashboard();
 
-
-    // Auth state listener
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         currentUser = user;
         try {
             const userDocRef = doc(db, "users", currentUser.uid);
             const userDocSnap = await getDoc(userDocRef);
-            if (userDocSnap.exists()) {
-              currentUserName = userDocSnap.data().name;
-            } else {
-              currentUserName = currentUser.email ? currentUser.email.split('@')[0] : "User";
-              console.warn("User document not found in Firestore for UID:", currentUser.uid);
-            }
+            currentUserName = userDocSnap.exists() ? userDocSnap.data().name : (currentUser.email ? currentUser.email.split('@')[0] : "User");
         } catch (error) {
             console.error("Error fetching user name:", error);
             currentUserName = currentUser.email ? currentUser.email.split('@')[0] : "User";
@@ -483,8 +562,7 @@
         showQuizListView();
         loadQuizzes();
       } else {
-        currentUser = null;
-        currentUserName = "User";
+        currentUser = null; currentUserName = "User";
         profileInitialSpan.textContent = 'U';
         appHeaderElement.style.display = "none";
         showLoginView();
@@ -492,435 +570,180 @@
     });
 
     window.login = function () {
-      const email = emailInput.value;
-      const password = passwordInput.value;
-      if (!email || !password) {
-        alert("Please enter both email and password.");
-        return;
-      }
-      loginButtonElement.disabled = true;
-      loginButtonElement.textContent = "Logging in...";
+      const email = emailInput.value; const password = passwordInput.value;
+      if (!email || !password) { showCustomModal("Please enter both email and password.", "Login Error", "error"); return; }
+      loginButtonElement.disabled = true; loginButtonElement.textContent = "Logging in...";
       signInWithEmailAndPassword(auth, email, password)
-        .catch(err => {
-            alert("Login failed: " + err.message);
-        })
-        .finally(() => {
-            if (!auth.currentUser) {
-                 loginButtonElement.disabled = false;
-                 loginButtonElement.textContent = "Login";
-            }
-        });
+        .catch(err => { showCustomModal("Login failed: " + err.message, "Login Error", "error"); })
+        .finally(() => { if (!auth.currentUser) { loginButtonElement.disabled = false; loginButtonElement.textContent = "Login"; }});
     };
 
     window.register = async function () {
-      const name = regNameInput.value.trim();
-      const email = regEmailInput.value.trim();
-      const password = regPasswordInput.value;
+      const name = regNameInput.value.trim(); const email = regEmailInput.value.trim(); const password = regPasswordInput.value;
       const registerButton = document.querySelector("#register-form button[onclick='register()']");
-
-      if (!name || !email || !password) {
-        alert("Please fill all registration fields.");
-        return;
-      }
-      if (password.length < 6) {
-        alert("Password should be at least 6 characters long.");
-        return;
-      }
-      registerButton.disabled = true;
-      registerButton.textContent = "Registering...";
-
+      if (!name || !email || !password) { showCustomModal("Please fill all registration fields.", "Registration Error", "error"); return; }
+      if (password.length < 6) { showCustomModal("Password should be at least 6 characters long.", "Registration Error", "error"); return; }
+      registerButton.disabled = true; registerButton.textContent = "Registering...";
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        await setDoc(doc(db, "users", user.uid), {
-          name: name,
-          email: email,
-          uid: user.uid
-        });
-        alert("Registration successful! Please login.");
-        showLoginForm();
-      } catch (err) {
-        alert("Registration failed: " + err.message);
-      } finally {
-        registerButton.disabled = false;
-        registerButton.textContent = "Register";
-      }
+        await setDoc(doc(db, "users", userCredential.user.uid), { name: name, email: email, uid: userCredential.user.uid });
+        showCustomModal("Registration successful! Please login.", "Success", "success", showLoginForm);
+      } catch (err) { showCustomModal("Registration failed: " + err.message, "Registration Error", "error");
+      } finally { registerButton.disabled = false; registerButton.textContent = "Register"; }
     };
 
-    window.logout = function() {
-        signOut(auth).catch(error => alert("Logout failed: " + error.message));
-    }
-
-    window.showRegisterForm = function () {
-      if (loginH2Element) loginH2Element.style.display = "none";
-      emailLoginField.style.display = "none";
-      passwordLoginField.style.display = "none";
-      loginButtonElement.style.display = "none";
-      authToggleDiv.style.display = "none";
-      registerFormDiv.style.display = "block";
-      if(registerH2Element) registerH2Element.style.display = "block";
-    };
-
-    window.showLoginForm = function () {
-      if (loginH2Element) loginH2Element.style.display = "block";
-      emailLoginField.style.display = "block";
-      passwordLoginField.style.display = "block";
-      loginButtonElement.style.display = "block";
-      loginButtonElement.disabled = false;
-      loginButtonElement.textContent = "Login";
-      authToggleDiv.style.display = "block";
-      registerFormDiv.style.display = "none";
-      if(registerH2Element) registerH2Element.style.display = "none";
-      regNameInput.value = "";
-      regEmailInput.value = "";
-      regPasswordInput.value = "";
-    };
-
-    function showView(viewToShow) {
-        [loginBox, quizListBox, quizBox, leaderboardBox, profileDashboardBox].forEach(view => {
-            view.style.display = (view === viewToShow) ? "block" : "none";
-        });
-         // Ensure header is visible for all views except login, handled by onAuthStateChanged and showLoginView
-        if (viewToShow !== loginBox && auth.currentUser) {
-            appHeaderElement.style.display = "flex";
-        } else if (viewToShow === loginBox) {
-            appHeaderElement.style.display = "none";
-        }
-    }
-
-    function showLoginView() {
-        appHeaderElement.style.display = "none"; // Explicitly hide header for login view
-        showView(loginBox);
-        showLoginForm();
-    }
+    window.logout = function() { signOut(auth).catch(error => showCustomModal("Logout failed: " + error.message, "Logout Error", "error")); };
+    window.showRegisterForm = function () { /* ... same as before ... */ loginH2Element.style.display="none";emailLoginField.style.display="none";passwordLoginField.style.display="none";loginButtonElement.style.display="none";authToggleDiv.style.display="none";registerFormDiv.style.display="block";if(registerH2Element)registerH2Element.style.display="block"; };
+    window.showLoginForm = function () { /* ... same as before ... */ loginH2Element.style.display="block";emailLoginField.style.display="block";passwordLoginField.style.display="block";loginButtonElement.style.display="block";loginButtonElement.disabled=false;loginButtonElement.textContent="Login";authToggleDiv.style.display="block";registerFormDiv.style.display="none";if(registerH2Element)registerH2Element.style.display="none";regNameInput.value="";regEmailInput.value="";regPasswordInput.value=""; };
+    function showView(viewToShow) { [loginBox, quizListBox, quizBox, leaderboardBox, profileDashboardBox].forEach(v => v.style.display = (v === viewToShow) ? "block" : "none"); if (viewToShow !== loginBox && auth.currentUser) appHeaderElement.style.display = "flex"; else if (viewToShow === loginBox) appHeaderElement.style.display = "none"; }
+    function showLoginView() { appHeaderElement.style.display = "none"; showView(loginBox); showLoginForm(); }
     function showQuizListView() { showView(quizListBox); }
     function showQuizTakingView() { showView(quizBox); }
     function showLeaderboardView() { showView(leaderboardBox); }
     function showProfileDashboardView() { showView(profileDashboardBox); }
 
-    async function loadQuizzes() {
-      // Clear previous quiz items, messages
-      quizItemsContainer.innerHTML = "";
+    async function loadQuizzes() { /* ... same as before ... */ quizItemsContainer.innerHTML = ""; try { const qS = await getDocs(collection(db, "quizzes")); if (qS.empty) { quizItemsContainer.innerHTML = "<p style='text-align:center;'>No quizzes available.</p>"; return; } qS.forEach(dS => { const d = dS.data(); const div = document.createElement("div"); div.className="quiz-item"; div.innerHTML=`<strong>${d.title}</strong><small>${d.description||'No description'}</small>`; div.onclick=()=>startQuiz(dS.id,d); quizItemsContainer.appendChild(div);}); } catch (e) { console.error("Error loading quizzes: ",e); showCustomModal("Could not load quizzes.","Loading Error","error"); quizItemsContainer.innerHTML="<p style='text-align:center;color:red;'>Failed to load.</p>";}}
 
-      try {
-        const querySnapshot = await getDocs(collection(db, "quizzes"));
-        if (querySnapshot.empty) {
-            const noQuizMsg = document.createElement("p");
-            noQuizMsg.textContent = "No quizzes available at the moment.";
-            noQuizMsg.style.textAlign = "center";
-            quizItemsContainer.appendChild(noQuizMsg);
-            return;
-        }
-        querySnapshot.forEach(docSnap => {
-          const data = docSnap.data();
-          const div = document.createElement("div");
-          div.className = "quiz-item";
-          div.innerHTML = `<strong>${data.title}</strong><small>${data.description || 'No description'}</small>`;
-          div.onclick = () => startQuiz(docSnap.id, data);
-          quizItemsContainer.appendChild(div);
-        });
-      } catch (error) {
-          console.error("Error loading quizzes: ", error);
-          alert("Could not load quizzes. Please try again later.");
-          const errorMsg = document.createElement("p");
-          errorMsg.textContent = "Failed to load quizzes.";
-          errorMsg.style.textAlign = "center";
-          errorMsg.style.color = "red";
-          quizItemsContainer.appendChild(errorMsg);
-      }
-    }
-
-    let currentQuizData = null;
-    let currentQuestionIndex = 0;
-    let currentScore = 0;
-    let questionsAttempted = 0;
-    let answersGiven = [];
-    let selectedOptionsMap = [];
-    let quizIdForDb = null;
+    let currentQuizData = null; let currentQuestionIndex = 0; let currentScore = 0;
+    let questionsAttempted = 0; let answersGiven = []; let selectedOptionsMap = []; let quizIdForDb = null;
 
     async function startQuiz(id, quizData) {
       quizIdForDb = id;
-      if (quizData) {
-          currentQuizData = quizData;
-      } else {
+      if (quizData) { currentQuizData = quizData; }
+      else {
           const docSnap = await getDoc(doc(db, "quizzes", id));
-          if (!docSnap.exists()) {
-              alert("Quiz not found!");
-              showQuizListView();
-              return;
-          }
+          if (!docSnap.exists()) { showCustomModal("Quiz not found!", "Error", "error", showQuizListView); return; }
           currentQuizData = docSnap.data();
       }
-
-      currentQuestionIndex = 0;
-      currentScore = 0;
-      questionsAttempted = 0;
+      currentQuestionIndex = 0; currentScore = 0; questionsAttempted = 0;
       answersGiven = Array(currentQuizData.questions.length).fill(false);
       selectedOptionsMap = Array(currentQuizData.questions.length).fill(null);
-
       showQuizTakingView();
       quizTitleElement.textContent = currentQuizData.title;
       quizDescriptionElement.textContent = currentQuizData.description || "";
       quizDescriptionElement.style.display = "block";
       progressBarElement.parentElement.style.display = "block";
       scoreBoxDiv.innerHTML = "";
+      // Initial button states for the quiz view
+      newNextBtnQuiz.style.display = 'block'; // Show it by default
+      newNextBtnQuiz.disabled = true;      // But disabled until an answer
       submitBtn.style.display = "none";
       backToQuizzesBtn.style.display = "block";
-      prevBtn.style.display = "inline-block";
-      nextBtn.style.display = "inline-block";
       questionBoxDiv.innerHTML = "";
       updateProgressBar();
       renderQuestion();
     }
 
     function renderQuestion() {
-      if (!currentQuizData || !currentQuizData.questions || currentQuestionIndex >= currentQuizData.questions.length) {
-          if (currentQuizData && currentQuizData.questions && answersGiven.every(a => a)) {
-            finalizeQuiz();
-          }
-          return;
-      }
-      const q = currentQuizData.questions[currentQuestionIndex];
-      prevBtn.disabled = currentQuestionIndex === 0;
-      nextBtn.disabled = currentQuestionIndex === currentQuizData.questions.length - 1 && answersGiven[currentQuestionIndex];
-
-      const allAnswered = answersGiven.every(a => a === true);
-      if (allAnswered || (currentQuestionIndex === currentQuizData.questions.length - 1 && answersGiven[currentQuestionIndex])) {
-        submitBtn.style.display = "block";
-        nextBtn.disabled = true;
-      } else {
-        submitBtn.style.display = "none";
-      }
-
-      questionBoxDiv.innerHTML = `<h3>Q${currentQuestionIndex + 1}: ${q.question}</h3>`;
-      q.options.forEach(optText => {
-        const btn = document.createElement("button");
-        btn.className = "option-btn";
-        btn.textContent = optText;
-
-        if (answersGiven[currentQuestionIndex]) {
-          btn.disabled = true;
-          if (optText === selectedOptionsMap[currentQuestionIndex]) {
-            btn.classList.add(optText === q.answer ? 'correct' : 'incorrect');
-          } else if (optText === q.answer) {
-            btn.classList.add('correct');
-          }
-        } else {
-          btn.onclick = () => handleAnswerSelection(btn, optText, q.answer);
+        if (!currentQuizData || !currentQuizData.questions || currentQuestionIndex >= currentQuizData.questions.length) {
+            if (currentQuizData && currentQuizData.questions && answersGiven.every(a => a)) finalizeQuiz();
+            return;
         }
-        questionBoxDiv.appendChild(btn);
-      });
-      updateProgressBar();
+        const q = currentQuizData.questions[currentQuestionIndex];
+        questionBoxDiv.innerHTML = `<h3>Q${currentQuestionIndex + 1}: ${q.question}</h3>`;
+        q.options.forEach(optText => {
+            const btn = document.createElement("button");
+            btn.className = "option-btn"; btn.textContent = optText;
+            if (answersGiven[currentQuestionIndex]) {
+                btn.disabled = true;
+                if (optText === selectedOptionsMap[currentQuestionIndex]) btn.classList.add(optText === q.answer ? 'correct' : 'incorrect');
+                else if (optText === q.answer) btn.classList.add('correct');
+            } else { btn.onclick = () => handleAnswerSelection(btn, optText, q.answer); }
+            questionBoxDiv.appendChild(btn);
+        });
+
+        // Default states for buttons at each question render
+        newNextBtnQuiz.style.display = 'block';
+        newNextBtnQuiz.disabled = true;
+        submitBtn.style.display = 'none';
+
+        if (answersGiven[currentQuestionIndex]) { // If current question is already answered
+            newNextBtnQuiz.disabled = false;
+        }
+
+        if (currentQuestionIndex === currentQuizData.questions.length - 1) { // Last question
+            newNextBtnQuiz.style.display = 'none'; // No "Next" on last q
+            if (answersGiven[currentQuestionIndex]) { // If last q is answered
+                submitBtn.style.display = 'block';
+            }
+        }
+        
+        if (answersGiven.every(a => a === true)) { // If all questions are answered
+            submitBtn.style.display = 'block';
+            newNextBtnQuiz.style.display = 'none'; // Submit takes precedence
+        }
+        updateProgressBar();
     }
 
-    function updateProgressBar() {
-      const answeredCount = answersGiven.filter(a => a).length;
-      const totalQuestions = currentQuizData ? currentQuizData.questions.length : 0;
-      const percent = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
-      progressBarElement.style.width = percent + "%";
-    }
+    function updateProgressBar() { /* ... same as before ... */ const ansCount = answersGiven.filter(a=>a).length; const totalQ = currentQuizData?currentQuizData.questions.length:0; const perc = totalQ>0?(ansCount/totalQ)*100:0; progressBarElement.style.width=perc+"%";}
 
     window.handleAnswerSelection = function (btn, selected, correct) {
       if (answersGiven[currentQuestionIndex]) return;
-
       const allOptionButtons = questionBoxDiv.querySelectorAll(".option-btn");
-      allOptionButtons.forEach(b => {
-          b.disabled = true;
-          if (b.textContent === correct) b.classList.add('correct');
-      });
-
-      if (selected === correct) {
-        btn.classList.add('correct');
-        if (!answersGiven[currentQuestionIndex]) currentScore++;
-      } else {
-        btn.classList.add('incorrect');
-      }
-
-      if (!answersGiven[currentQuestionIndex]) questionsAttempted++;
-      answersGiven[currentQuestionIndex] = true;
-      selectedOptionsMap[currentQuestionIndex] = selected;
+      allOptionButtons.forEach(b => { b.disabled = true; if (b.textContent === correct) b.classList.add('correct'); });
+      if (selected === correct) { btn.classList.add('correct'); currentScore++; }
+      else { btn.classList.add('incorrect'); }
+      answersGiven[currentQuestionIndex] = true; selectedOptionsMap[currentQuestionIndex] = selected; questionsAttempted++;
       updateProgressBar();
 
-      nextBtn.disabled = currentQuestionIndex === currentQuizData.questions.length - 1;
+      // Button state updates after answer selection
+      newNextBtnQuiz.disabled = true; // Default to disabled, enable if conditions met
+      newNextBtnQuiz.style.display = 'block'; // Default to visible
+      submitBtn.style.display = 'none'; // Default to hidden
 
-      const allAnswered = answersGiven.every(a => a === true);
-      if (allAnswered || (currentQuestionIndex === currentQuizData.questions.length - 1)) {
-          submitBtn.style.display = "block";
-          nextBtn.disabled = true;
+      if (currentQuestionIndex < currentQuizData.questions.length - 1) { // Not the last question
+          newNextBtnQuiz.disabled = false;
+      } else { // Last question is now answered
+          newNextBtnQuiz.style.display = 'none';
+          submitBtn.style.display = 'block';
+      }
+
+      if (answersGiven.every(a => a === true)) { // All questions answered
+          submitBtn.style.display = 'block';
+          newNextBtnQuiz.style.display = 'none';
       }
     };
 
-    prevBtn.onclick = () => {
-      if (currentQuestionIndex > 0) {
-        currentQuestionIndex--;
-        renderQuestion();
-      }
-    };
-
-    nextBtn.onclick = () => {
-      if (currentQuestionIndex < currentQuizData.questions.length - 1 && answersGiven[currentQuestionIndex]) {
+    // newNextBtnQuiz click handler
+    newNextBtnQuiz.onclick = () => {
+      if (!newNextBtnQuiz.disabled && currentQuestionIndex < currentQuizData.questions.length - 1) {
         currentQuestionIndex++;
         renderQuestion();
-      } else if (!answersGiven[currentQuestionIndex]) {
-        alert("Please select an answer before moving to the next question.");
       }
     };
 
     submitBtn.onclick = async () => {
         if (!answersGiven.every(a => a === true)) {
-            if (!confirm("You have unanswered questions. Are you sure you want to submit?")) {
-                return;
-            }
-        }
-        finalizeQuiz();
+            showCustomModal("You have unanswered questions. Submit anyway?", "Confirm Submission", "confirm",
+                () => { finalizeQuiz(); }, // onConfirm
+                () => { console.log("Submission cancelled."); } // onCancel
+            );
+        } else { finalizeQuiz(); }
     };
 
     async function finalizeQuiz() {
         questionBoxDiv.innerHTML = `<p style="text-align:center; font-size: 1.1rem; color: #2c3e50;">Quiz Completed!</p>`;
         submitBtn.style.display = "none";
-        prevBtn.style.display = "none";
-        nextBtn.style.display = "none";
+        newNextBtnQuiz.style.display = "none"; // Hide new next button
         quizDescriptionElement.style.display = "none";
         progressBarElement.parentElement.style.display = "none";
-
         scoreBoxDiv.innerHTML = `
             <p>Total Questions: <strong>${currentQuizData.questions.length}</strong></p>
             <p>Attempted: <strong>${questionsAttempted}</strong></p>
             <p>Correct Answers: <strong>${currentScore}</strong></p>
-            <p>Your Score: <strong>${((currentScore / currentQuizData.questions.length) * 100).toFixed(1)}%</strong></p>
-        `;
+            <p>Your Score: <strong>${((currentScore / currentQuizData.questions.length) * 100).toFixed(1)}%</strong></p>`;
         backToQuizzesBtn.textContent = "View Other Quizzes";
-
-        if (currentUser) {
-            try {
-                await addDoc(collection(db, "results"), {
-                    userId: currentUser.uid,
-                    userName: currentUserName,
-                    quizTitle: currentQuizData.title,
-                    quizId: quizIdForDb,
-                    score: currentScore,
-                    totalQuestions: currentQuizData.questions.length,
-                    attempted: questionsAttempted,
-                    timestamp: new Date()
-                });
-            } catch (error) {
-                console.error("Error saving quiz result: ", error);
-                alert("Could not save your quiz result. Please check your connection.");
-            }
-        }
+        if (currentUser) { /* ... same result saving logic ... */ try { await addDoc(collection(db,"results"),{userId:currentUser.uid,userName:currentUserName,quizTitle:currentQuizData.title,quizId:quizIdForDb,score:currentScore,totalQuestions:currentQuizData.questions.length,attempted:questionsAttempted,timestamp:new Date()});}catch(e){console.error("Error saving result: ",e);showCustomModal("Could not save result.","Save Error","error");}}
     }
 
-    window.goBackToQuizList = function () {
-      showQuizListView();
-      quizDescriptionElement.style.display = "block";
-      progressBarElement.parentElement.style.display = "block";
-      scoreBoxDiv.innerHTML = "";
-      backToQuizzesBtn.textContent = "Back to Quizzes";
-    };
+    window.goBackToQuizList = function () { /* ... same as before ... */ showQuizListView(); quizDescriptionElement.style.display="block"; progressBarElement.parentElement.style.display="block"; scoreBoxDiv.innerHTML=""; backToQuizzesBtn.textContent="Back to Quizzes";};
+    window.showLeaderboard = async function () { /* ... same as before ... */ showLeaderboardView(); const lbTBody=document.getElementById("leaderboard-table").querySelector("tbody"); lbTBody.innerHTML="<tr><td colspan='3' style='text-align:center;'>Loading...</td></tr>"; try{const rS=await getDocs(collection(db,"results"));const uS={};rS.forEach(rD=>{const rd=rD.data();if(!uS[rd.userId]){uS[rd.userId]={totalScore:0,name:rd.userName||'Anonymous',uid:rd.userId};}uS[rd.userId].totalScore+=rd.score;if(rd.userName&&rd.userName!=='Anonymous')uS[rd.userId].name=rd.userName;});const uTFN=Object.values(uS).filter(u=>u.name==='Anonymous'||!u.name);if(uTFN.length>0){const uDP=uTFN.map(u=>getDoc(doc(db,"users",u.uid)));const uDSS=await Promise.all(uDP);uDSS.forEach(uDSn=>{if(uDSn.exists()){const uDa=uDSn.data();if(uS[uDSn.id])uS[uDSn.id].name=uDa.name;}});}const lbA=Object.values(uS).sort((a,b)=>b.totalScore-a.totalScore);lbTBody.innerHTML="";if(lbA.length===0){lbTBody.innerHTML="<tr><td colspan='3' style='text-align:center;'>No scores yet!</td></tr>";return;}lbA.forEach((e,i)=>{const r=lbTBody.insertRow();r.insertCell().textContent=i+1;r.insertCell().textContent=e.name||'User';r.insertCell().textContent=e.totalScore;});}catch(e){console.error("Error loading leaderboard: ",e);lbTBody.innerHTML="<tr><td colspan='3' style='text-align:center;'>Could not load.</td></tr>";}};
+    window.goBackToQuizListFromLeaderboard = function() { showQuizListView(); };
+    async function fetchUserProfileStats() { /* ... same as before ... */ if(!currentUser)return{quizzesTaken:0,overallScore:0};let qT=0,oS=0;try{const q=query(collection(db,"results"),where("userId","==",currentUser.uid));const qS=await getDocs(q);qT=qS.size;qS.forEach(d=>{oS+=d.data().score;});return{quizzesTaken:qT,overallScore:oS};}catch(e){console.error("Error fetching stats:",e);return{quizzesTaken:0,overallScore:0};}}
+    window.showProfileDashboard = async function() { /* ... same as before ... */ if(!currentUser){showLoginView();return;}showProfileDashboardView();profileNameSpan.textContent=currentUserName;profileEmailSpan.textContent=currentUser.email;profileQuizzesTakenSpan.textContent="Loading...";profileOverallScoreSpan.textContent="Loading...";const s=await fetchUserProfileStats();profileQuizzesTakenSpan.textContent=s.quizzesTaken;profileOverallScoreSpan.textContent=s.overallScore;}
+    window.goBackToQuizListFromProfile = function() { showQuizListView(); };
 
-    window.showLeaderboard = async function () {
-      showLeaderboardView();
-      const leaderboardTableBody = document.getElementById("leaderboard-table").querySelector("tbody");
-      leaderboardTableBody.innerHTML = "<tr><td colspan='3' style='text-align:center;'>Loading leaderboard...</td></tr>";
-
-      try {
-        const resultsSnapshot = await getDocs(collection(db, "results"));
-        const userScores = {};
-
-        resultsSnapshot.forEach(resDoc => {
-          const resultData = resDoc.data();
-          if (!userScores[resultData.userId]) {
-            userScores[resultData.userId] = { totalScore: 0, name: resultData.userName || 'Anonymous User', uid: resultData.userId };
-          }
-          userScores[resultData.userId].totalScore += resultData.score;
-          if (resultData.userName && resultData.userName !== 'Anonymous User') {
-             userScores[resultData.userId].name = resultData.userName;
-          }
-        });
-
-        const usersToFetchNamesFor = Object.values(userScores).filter(u => u.name === 'Anonymous User' || !u.name);
-        if (usersToFetchNamesFor.length > 0) {
-            const userDocsPromises = usersToFetchNamesFor.map(u => getDoc(doc(db, "users", u.uid)));
-            const userDocsSnapshots = await Promise.all(userDocsPromises);
-            userDocsSnapshots.forEach(userDocSnap => {
-                if (userDocSnap.exists()) {
-                    const userData = userDocSnap.data();
-                    if (userScores[userDocSnap.id]) {
-                        userScores[userDocSnap.id].name = userData.name;
-                    }
-                }
-            });
-        }
-
-        const leaderboardArray = Object.values(userScores);
-        leaderboardArray.sort((a, b) => b.totalScore - a.totalScore);
-
-        leaderboardTableBody.innerHTML = "";
-        if (leaderboardArray.length === 0) {
-            leaderboardTableBody.innerHTML = "<tr><td colspan='3' style='text-align:center;'>No scores recorded yet!</td></tr>";
-            return;
-        }
-
-        leaderboardArray.forEach((entry, index) => {
-          const row = leaderboardTableBody.insertRow();
-          row.insertCell().textContent = index + 1;
-          row.insertCell().textContent = entry.name || 'User';
-          row.insertCell().textContent = entry.totalScore;
-        });
-
-      } catch (error) {
-        console.error("Error loading leaderboard: ", error);
-        leaderboardTableBody.innerHTML = "<tr><td colspan='3' style='text-align:center;'>Could not load leaderboard. Try again.</td></tr>";
-      }
-    };
-
-    window.goBackToQuizListFromLeaderboard = function() {
-        showQuizListView();
-    };
-
-    async function fetchUserProfileStats() {
-        if (!currentUser) return { quizzesTaken: 0, overallScore: 0 };
-        let quizzesTaken = 0;
-        let overallScore = 0;
-        try {
-            const q = query(collection(db, "results"), where("userId", "==", currentUser.uid));
-            const querySnapshot = await getDocs(q);
-            quizzesTaken = querySnapshot.size;
-            querySnapshot.forEach(doc => {
-                overallScore += doc.data().score;
-            });
-            return { quizzesTaken, overallScore };
-        } catch (error) {
-            console.error("Error fetching user profile stats:", error);
-            return { quizzesTaken: 0, overallScore: 0 };
-        }
-    }
-
-    window.showProfileDashboard = async function() {
-        if (!currentUser) {
-            showLoginView();
-            return;
-        }
-        showProfileDashboardView();
-        profileNameSpan.textContent = currentUserName;
-        profileEmailSpan.textContent = currentUser.email;
-        profileQuizzesTakenSpan.textContent = "Loading...";
-        profileOverallScoreSpan.textContent = "Loading...";
-        const stats = await fetchUserProfileStats();
-        profileQuizzesTakenSpan.textContent = stats.quizzesTaken;
-        profileOverallScoreSpan.textContent = stats.overallScore;
-    }
-
-    window.goBackToQuizListFromProfile = function() {
-        showQuizListView();
-    };
-
-    // Initial view setup
-    if (!auth.currentUser) { // If no user on initial load, show login view and ensure header is hidden.
-        appHeaderElement.style.display = "none";
-        showLoginView();
-    }
-    // onAuthStateChanged will handle further logic if user is already logged in or logs in/out.
+    if (!auth.currentUser) { appHeaderElement.style.display = "none"; showLoginView(); }
   </script>
 </body>
 </html>
