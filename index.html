@@ -517,7 +517,7 @@
             const categoriesQuery = query(collection(db, "categories"), orderBy("order", "asc"));
             const categoriesSnapshot = await getDocs(categoriesQuery);
             categoryGridContainer.innerHTML = '';
-            addCategoryCard({ name: "All Quizzes", special: "all", iconClass: "fas fa-list" });
+            addCategoryCard({ name: "All Quizzes", special: "all", iconClass: "fas fa-layer-group" });
             if (categoriesSnapshot.empty) {
                  console.log("No custom categories found in Firestore.");
             } else {
@@ -528,7 +528,7 @@
             showCustomModal("Could not load quiz categories.", "Loading Error", "error");
             categoryGridContainer.innerHTML = '<p class="leaderboard-placeholder" style="grid-column: 1 / -1; color:red;">Failed to load categories.</p>';
             if (!categoryGridContainer.querySelector('.category-card[data-name="All Quizzes"]')) {
-                 addCategoryCard({ name: "All Quizzes", special: "all", iconClass: "fas fa-list" });
+                 addCategoryCard({ name: "All Quizzes", special: "all", iconClass: "fas fa-layer-group" });
             }
         }
     }
