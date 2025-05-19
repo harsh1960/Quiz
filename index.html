@@ -41,9 +41,13 @@
     .header-icon {
       width: 44px; height: 44px; border-radius: 50%; display: flex;
       align-items: center; justify-content: center; color: white;
-      font-size: 1.4rem; font-weight: bold; cursor: pointer;
+      font-size: 1.4rem; /* Adjusted for icon size if needed */
+      font-weight: bold; cursor: pointer;
       transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
       flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+    .header-icon i { /* Style for the icon itself */
+        line-height: 1; /* Helps with vertical alignment */
     }
     .header-icon:hover { transform: scale(1.08); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
     #leaderboard-icon-container { background-color: #e67e22; }
@@ -400,8 +404,7 @@
 <body>
   <header class="app-header hidden-initial" id="app-header">
     <div class="header-icon" id="leaderboard-icon-container" title="View Leaderboard">
-        <span id="leaderboard-initial">L</span>
-    </div>
+        <i class="fas fa-trophy"></i> </div>
     <h1 id="main-app-title">The Quiz Hub</h1>
     <div class="header-icon" id="profile-icon-container" title="My Profile">
         <span id="profile-initial">U</span> </div>
