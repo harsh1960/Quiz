@@ -22,6 +22,15 @@
       color: #2c3e50;
       font-size: 1.5rem;
     }
+     /* Engaging Subtitle for Leaderboard */
+    .leaderboard-box .leaderboard-subtitle {
+        text-align: center;
+        font-size: 0.95rem;
+        color: #566573;
+        margin-top: -15px; /* Adjust to pull it closer to h2 */
+        margin-bottom: 20px;
+    }
+
 
     .app-header {
       display: flex; justify-content: space-between; align-items: center;
@@ -41,13 +50,13 @@
     .header-icon {
       width: 44px; height: 44px; border-radius: 50%; display: flex;
       align-items: center; justify-content: center; color: white;
-      font-size: 1.4rem; /* Adjusted for icon size if needed */
+      font-size: 1.4rem; 
       font-weight: bold; cursor: pointer;
       transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
       flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.15);
     }
-    .header-icon i { /* Style for the icon itself */
-        line-height: 1; /* Helps with vertical alignment */
+    .header-icon i { 
+        line-height: 1; 
     }
     .header-icon:hover { transform: scale(1.08); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
     #leaderboard-icon-container { background-color: #e67e22; }
@@ -135,14 +144,13 @@
     .question-box h3 { margin-bottom: 18px; font-size: 1.2rem; color: #34495e; }
     .option-btn { display: block; width: 100%; margin: 10px 0; padding: 14px; font-size: 1rem; background: #ecf0f1; border: 1px solid #dde1e2; border-radius: 8px; cursor: pointer; text-align: left; transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out, transform 0.1s ease-out, box-shadow 0.2s ease; }
     .option-btn:hover:not(:disabled) { background: #d5dfe7; border-color: #c0c9d0; transform: translateX(3px); }
-    .option-btn:disabled { opacity: 0.9; cursor: default; } /* Keep opacity higher for preview */
+    .option-btn:disabled { opacity: 0.9; cursor: default; } 
     .option-btn.correct { background-color: #2ecc71 !important; color: white !important; border-color: #27ae60 !important; animation: pulseCorrect 0.5s ease; }
     .option-btn.incorrect { background-color: #e74c3c !important; color: white !important; border-color: #c0392b !important; animation: pulseIncorrect 0.5s ease; }
 
-    /* Styles for Preview Mode */
-    .option-btn.user-selected { box-shadow: 0 0 0 3px #5dade2 inset; /* Blue inset shadow for user's pick */ }
+    .option-btn.user-selected { box-shadow: 0 0 0 3px #5dade2 inset; }
     .option-btn.actual-correct { background-color: #d4efdf !important; color: #145a32 !important; border: 2px solid #27ae60 !important; }
-    .option-btn.actual-correct.user-selected { background-color: #2ecc71 !important; color: white !important; border-color: #27ae60 !important; box-shadow: none; } /* If user picked correctly, use full correct style */
+    .option-btn.actual-correct.user-selected { background-color: #2ecc71 !important; color: white !important; border-color: #27ae60 !important; box-shadow: none; } 
     .option-btn.user-selected-incorrect { background-color: #fadbd8 !important; color: #78281f !important; border: 2px solid #c0392b !important; box-shadow: none; }
 
 
@@ -164,9 +172,9 @@
     #newNextBtnQuiz:hover:not(:disabled) { background-color: #d35400; box-shadow: 0 4px 8px rgba(0,0,0,0.15); transform: translateY(-1px); }
     #newNextBtnQuiz:disabled, #prevPreviewBtn:disabled, #nextPreviewBtn:disabled { background-color: #bdc3c7; opacity: 0.7; cursor: default; box-shadow: none; transform: none; }
     #newNextBtnQuiz:active:enabled { transform: translateY(1px) scale(0.98); }
-    #previewAnswersBtn { background-color: #5dade2; } /* Blue for preview */
+    #previewAnswersBtn { background-color: #5dade2; } 
     #previewAnswersBtn:hover { background-color: #3498db; }
-    #prevPreviewBtn, #nextPreviewBtn { background-color: #8e44ad; } /* Purple for preview navigation */
+    #prevPreviewBtn, #nextPreviewBtn { background-color: #8e44ad; } 
     #prevPreviewBtn:hover:not(:disabled), #nextPreviewBtn:hover:not(:disabled) { background-color: #732d91; }
 
 
@@ -190,13 +198,52 @@
     .leaderboard-box th { background-color: #3498db; color: white; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; }
     .leaderboard-box tr { transition: background-color 0.2s ease; opacity: 0; transform: translateX(-20px); animation: slideInRow 0.4s forwards; }
     .leaderboard-box tr:nth-child(even) { background-color: #f8f9fa; }
-    .leaderboard-box tr:hover { background-color: #e9ecef; }
+    /* .leaderboard-box tr:hover { background-color: #e9ecef; } */ /* Handled by specific top rank hover */
     .leaderboard-box td:first-child { font-weight: bold; text-align: center; width: 60px; color: #e67e22; font-size: 1.1rem; }
     .leaderboard-box td:nth-child(3) { text-align: center; }
     .leaderboard-box tr.current-user-leaderboard td { background-color: #dcf0ff !important; font-weight: bold; }
     .leaderboard-box .button-container { margin-top: 25px; }
     .leaderboard-placeholder td { text-align: center !important; color: #7f8c8d; font-style: italic; padding: 20px 0 !important; font-size: 1rem; animation: none !important; opacity: 1 !important; transform: translateX(0) !important; }
     @keyframes slideInRow { to { opacity: 1; transform: translateX(0); } }
+
+    /* Leaderboard Rank Badges and Row Highlights */
+    .rank-badge {
+        margin-right: 10px;
+        font-size: 1.2em; /* Slightly larger */
+        vertical-align: middle;
+        animation: pulseBadge 2.5s infinite ease-in-out;
+        text-shadow: 0 0 3px rgba(0,0,0,0.2); /* Subtle shadow for depth */
+    }
+    .rank-1-badge { color: #FFD700; /* Gold */ }
+    .rank-2-badge { color: #C0C0C0; /* Silver */ animation-delay: -0.3s; } /* Offset animation */
+    .rank-3-badge { color: #CD7F32; /* Bronze */ animation-delay: -0.6s; } /* Offset animation */
+
+    @keyframes pulseBadge {
+        0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.8; }
+        50% { transform: scale(1.2) rotate(5deg); opacity: 1; }
+    }
+    
+    .leaderboard-box tr.top-rank-1 td { background-color: rgba(255, 215, 0, 0.08) !important; }
+    .leaderboard-box tr.top-rank-2 td { background-color: rgba(192, 192, 192, 0.08) !important; }
+    .leaderboard-box tr.top-rank-3 td { background-color: rgba(205, 127, 50, 0.08) !important; }
+
+    .leaderboard-box tr.top-rank-1:hover td,
+    .leaderboard-box tr.top-rank-2:hover td,
+    .leaderboard-box tr.top-rank-3:hover td {
+        background-color: rgba(0,0,0,0.05) !important; /* Darken highlight slightly on hover */
+    }
+    /* Ensure current user highlight overrides top rank if they are a top ranker */
+    .leaderboard-box tr.current-user-leaderboard.top-rank-1 td,
+    .leaderboard-box tr.current-user-leaderboard.top-rank-2 td,
+    .leaderboard-box tr.current-user-leaderboard.top-rank-3 td {
+        background-color: #cceaff !important; /* Slightly more vibrant blue for current user in top 3 */
+        font-weight: bold;
+    }
+    .leaderboard-box tr.current-user-leaderboard td { /* General current user highlight if not in top 3 */
+        background-color: #dcf0ff !important; 
+        font-weight: bold;
+    }
+
 
     .profile-dashboard h2 { color: #2c3e50; padding-bottom: 10px; border-bottom: 2px solid #5dade2; }
     .profile-info { background-color: #f8f9fa; padding: 25px; border-radius: 8px; margin-top: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -237,10 +284,10 @@
     #modal-cancel-btn:hover { background-color: #7f8c8d; }
 
 
-    @media (min-width: 450px) { .button-container { flex-direction: row; justify-content: space-around; } .button-container button { width: auto; } } /* Changed to space-around */
-    @media (max-width: 640px) { h2 { font-size: 1.3rem; } .app-header h1 { font-size: 1.4rem; } .header-icon { width: 40px; height: 40px; font-size: 1.2rem; } .app-header { padding: 10px 15px; } .content-wrapper { padding: 10px; } .view { padding: 15px; margin: 15px auto; width: calc(100% - 20px); left: 10px; } .quiz-item { font-size: 1rem; padding: 12px 15px; } .option-btn { padding: 12px; font-size: 0.95rem;} .back-btn, .submit-btn, #newNextBtnQuiz, #previewAnswersBtn, #prevPreviewBtn, #nextPreviewBtn { padding: 10px 15px; font-size: 0.95rem; } .leaderboard-box th, .leaderboard-box td { padding: 10px; font-size: 0.9rem;} .login-box input, #register-form input { padding: 12px; font-size: 0.95rem;} .login-box .action-btn, #register-form .action-btn { padding: 12px; } .profile-info p { font-size: 1rem; padding-bottom: 12px; margin-bottom: 12px;} .profile-info {padding: 20px;} .modal { width: 90%; } .button-container button { width: 100%; margin-bottom: 8px;} #category-grid-container {grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;} .category-card {padding: 20px 15px; min-height: 130px;} .category-card .card-icon {font-size: 2.5rem; width: 50px; height: 50px; margin-bottom: 10px;} .category-card .card-name {font-size: 1.1rem;} }
+    @media (min-width: 450px) { .button-container { flex-direction: row; justify-content: space-around; } .button-container button { width: auto; } } 
+    @media (max-width: 640px) { h2 { font-size: 1.3rem; } .leaderboard-box .leaderboard-subtitle {font-size: 0.9rem;} .app-header h1 { font-size: 1.4rem; } .header-icon { width: 40px; height: 40px; font-size: 1.2rem; } .app-header { padding: 10px 15px; } .content-wrapper { padding: 10px; } .view { padding: 15px; margin: 15px auto; width: calc(100% - 20px); left: 10px; } .quiz-item { font-size: 1rem; padding: 12px 15px; } .option-btn { padding: 12px; font-size: 0.95rem;} .back-btn, .submit-btn, #newNextBtnQuiz, #previewAnswersBtn, #prevPreviewBtn, #nextPreviewBtn { padding: 10px 15px; font-size: 0.95rem; } .leaderboard-box th, .leaderboard-box td { padding: 10px; font-size: 0.9rem;} .login-box input, #register-form input { padding: 12px; font-size: 0.95rem;} .login-box .action-btn, #register-form .action-btn { padding: 12px; } .profile-info p { font-size: 1rem; padding-bottom: 12px; margin-bottom: 12px;} .profile-info {padding: 20px;} .modal { width: 90%; } .button-container button { width: 100%; margin-bottom: 8px;} #category-grid-container {grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;} .category-card {padding: 20px 15px; min-height: 130px;} .category-card .card-icon {font-size: 2.5rem; width: 50px; height: 50px; margin-bottom: 10px;} .category-card .card-name {font-size: 1.1rem;} }
     @media (min-width: 450px) and (max-width: 640px) { .button-container {flex-direction: row; justify-content: space-around;} .button-container button { width: auto; } }
-    @media (max-width: 380px) { .app-header h1 { font-size: 1.2rem; } .header-icon { width: 36px; height: 36px; font-size: 1.1rem; } .app-header { padding: 8px 10px; } .content-wrapper { padding: 10px; } .view { padding: 10px; width: calc(100% - 20px); left: 10px;} .quiz-item { font-size: 0.95rem; margin: 10px 0; } .quiz-header { margin-bottom: 10px; } #quiz-title { font-size: 1.2rem; } .question-box h3 { font-size: 1.1rem; margin-bottom: 12px; } #progress-container { margin-bottom: 20px; } .profile-info p { font-size: 0.95rem; padding-bottom: 10px; margin-bottom: 10px;} .profile-info {padding: 15px;} .modal-header h3 { font-size: 1.1rem;} .modal-body {padding: 15px 20px; font-size: 0.9rem;} .modal-footer { padding: 10px 15px;} .modal-action-btn {padding: 8px 15px; font-size: 0.9rem;} #category-grid-container {grid-template-columns: 1fr; gap: 10px;} .category-card {padding: 15px; min-height: 120px;} .category-card .card-icon {font-size: 2.2rem; width: 45px; height: 45px;} .category-card .card-name{font-size: 1rem;} .button-container {flex-direction: column;} .button-container button {width: 100%; margin-bottom: 8px;} }
+    @media (max-width: 380px) { .app-header h1 { font-size: 1.2rem; } .leaderboard-box .leaderboard-subtitle {font-size: 0.85rem; margin-top: -12px; margin-bottom: 15px;} .header-icon { width: 36px; height: 36px; font-size: 1.1rem; } .app-header { padding: 8px 10px; } .content-wrapper { padding: 10px; } .view { padding: 10px; width: calc(100% - 20px); left: 10px;} .quiz-item { font-size: 0.95rem; margin: 10px 0; } .quiz-header { margin-bottom: 10px; } #quiz-title { font-size: 1.2rem; } .question-box h3 { font-size: 1.1rem; margin-bottom: 12px; } #progress-container { margin-bottom: 20px; } .profile-info p { font-size: 0.95rem; padding-bottom: 10px; margin-bottom: 10px;} .profile-info {padding: 15px;} .modal-header h3 { font-size: 1.1rem;} .modal-body {padding: 15px 20px; font-size: 0.9rem;} .modal-footer { padding: 10px 15px;} .modal-action-btn {padding: 8px 15px; font-size: 0.9rem;} #category-grid-container {grid-template-columns: 1fr; gap: 10px;} .category-card {padding: 15px; min-height: 120px;} .category-card .card-icon {font-size: 2.2rem; width: 45px; height: 45px;} .category-card .card-name{font-size: 1rem;} .button-container {flex-direction: column;} .button-container button {width: 100%; margin-bottom: 8px;} }
   </style>
 </head>
 <body>
@@ -287,7 +334,8 @@
         </div>
         <p id="quiz-description" style="text-align: center; margin-bottom: 15px;"></p>
         <div id="progress-container"><div id="progress-bar"></div></div>
-        <div id="score-box"></div> <div class="question-box" id="question-box"></div>
+        <div id="score-box"></div> 
+        <div class="question-box" id="question-box"></div>
         <div class="button-container" id="quiz-action-buttons">
             <button class="action-btn" id="newNextBtnQuiz" style="display: none;">Next Question</button>
             <button class="submit-btn" id="submitBtn" style="display: none;">Submit Quiz</button>
@@ -300,6 +348,7 @@
 
       <div class="leaderboard-box view hidden" id="leaderboard-box">
         <h2>Leaderboard</h2>
+        <p class="leaderboard-subtitle">Battle for the top spots and earn your badge!</p>
         <table id="leaderboard-table">
           <thead><tr><th>Rank</th><th>Name</th><th>Quizzes Played</th><th>Total Score</th></tr></thead>
           <tbody></tbody>
@@ -377,7 +426,7 @@
     const categoryGridContainer = document.getElementById("category-grid-container");
     const backToCategoriesBtn = document.getElementById("back-to-categories-btn");
     const quizItemsContainer = document.getElementById("quiz-items-container");
-    const quizBoxElement = document.getElementById("quiz-box"); // Renamed for clarity
+    const quizBoxElement = document.getElementById("quiz-box"); 
     const leaderboardBox = document.getElementById("leaderboard-box");
     const profileDashboardBox = document.getElementById("profile-dashboard");
     const emailInput = document.getElementById("email");
@@ -390,7 +439,7 @@
 
     const quizTitleElement = document.getElementById("quiz-title");
     const quizDescriptionElement = document.getElementById("quiz-description");
-    const progressBarContainer = document.getElementById("progress-container"); // For hiding
+    const progressBarContainer = document.getElementById("progress-container"); 
     const progressBarElement = document.getElementById("progress-bar");
     const questionBoxDiv = document.getElementById("question-box");
     const scoreBoxDiv = document.getElementById("score-box");
@@ -415,10 +464,8 @@
     const modalCancelBtn = document.getElementById('modal-cancel-btn');
     let modalOnOkCallback = null; let modalOnConfirmCallback = null; let modalOnCancelCallback = null;
 
-    // Quiz state variables
     let currentQuizData = null; let currentQuestionIndex = 0; let currentScore = 0;
     let questionsAttempted = 0; let answersGiven = []; let selectedOptionsMap = []; let quizIdForDb = null;
-    // Preview state variables
     let isPreviewMode = false; let currentPreviewQuestionIndex = 0;
 
 
@@ -482,20 +529,19 @@
     function showLeaderboardView() { resetQuizState(); showView(leaderboardBox); loadLeaderboard(); }
     function showProfileDashboardView() { resetQuizState(); showView(profileDashboardBox); loadProfile(); }
 
-    async function loadCategories() { /* ... (no changes in this function) ... */ categoryGridContainer.innerHTML = '<p class="leaderboard-placeholder" style="grid-column: 1 / -1;">Loading categories...</p>'; quizItemsContainer.style.display = 'none'; quizItemsContainer.innerHTML = ''; categoryGridContainer.style.display = 'grid'; backToCategoriesBtn.style.display = 'none'; backToCategoriesBtn.classList.remove('visible'); quizListHeading.textContent = 'Quiz Categories'; try { const categoriesQuery = query(collection(db, "categories"), orderBy("order", "asc")); const categoriesSnapshot = await getDocs(categoriesQuery); categoryGridContainer.innerHTML = ''; addCategoryCard({ name: "All Quizzes", special: "all", iconClass: "fas fa-layer-group" }); if (categoriesSnapshot.empty) { console.log("No custom categories found in Firestore."); } else { categoriesSnapshot.forEach(docSnap => { addCategoryCard(docSnap.data(), docSnap.id); }); } const cards = categoryGridContainer.querySelectorAll('.category-card'); cards.forEach((card, index) => { setTimeout(() => card.classList.add('visible'), index * 100); }); } catch (error) { console.error("Error loading categories: ", error); showCustomModal("Could not load quiz categories.", "Loading Error", "error"); categoryGridContainer.innerHTML = '<p class="leaderboard-placeholder" style="grid-column: 1 / -1; color:red;">Failed to load categories.</p>'; if (!categoryGridContainer.querySelector('.category-card[data-name="All Quizzes"]')) { addCategoryCard({ name: "All Quizzes", special: "all", iconClass: "fas fa-layer-group" }); setTimeout(() => categoryGridContainer.querySelector('.category-card').classList.add('visible'), 0); } } }
-    function addCategoryCard(categoryData, categoryId = null) { /* ... (no changes in this function) ... */ const card = document.createElement('div'); card.className = 'category-card'; if(categoryData.name) card.dataset.name = categoryData.name; if (categoryData.color) card.style.backgroundColor = categoryData.color; const iconContainer = document.createElement('div'); iconContainer.className = 'card-icon'; if (categoryData.iconClass) { const i = document.createElement('i'); i.className = categoryData.iconClass; iconContainer.appendChild(i); } else if (categoryData.imageUrl) { const img = document.createElement('img'); img.src = categoryData.imageUrl; img.alt = categoryData.name || 'Category Image'; iconContainer.appendChild(img); } else { const span = document.createElement('span'); span.textContent = categoryData.name ? categoryData.name.charAt(0).toUpperCase() : 'Q'; iconContainer.appendChild(span); } const nameSpan = document.createElement('span'); nameSpan.className = 'card-name'; nameSpan.textContent = categoryData.name || 'Unnamed Category'; card.appendChild(iconContainer); card.appendChild(nameSpan); if (typeof categoryData.quizCount === 'number') { const countSpan = document.createElement('span'); countSpan.className = 'card-quiz-count'; countSpan.textContent = `${categoryData.quizCount} Quizzes`; card.appendChild(countSpan); } card.onclick = () => showQuizzesForCategory(categoryData.special === "all" ? "all" : categoryData.name); categoryGridContainer.appendChild(card); }
-    async function showQuizzesForCategory(categoryName) { /* ... (no changes in this function) ... */ quizItemsContainer.innerHTML = '<p class="leaderboard-placeholder">Loading quizzes...</p>'; quizItemsContainer.style.display = 'block'; categoryGridContainer.style.display = 'none'; backToCategoriesBtn.style.display = 'inline-block'; setTimeout(() => backToCategoriesBtn.classList.add('visible'), 50); quizListHeading.textContent = categoryName === 'all' ? 'All Quizzes' : `Quizzes in ${categoryName}`; try { let quizzesQuery; if (categoryName === 'all') { quizzesQuery = collection(db, "quizzes"); } else { quizzesQuery = query(collection(db, "quizzes"), where("category", "==", categoryName)); } const querySnapshot = await getDocs(quizzesQuery); quizItemsContainer.innerHTML = ''; if (querySnapshot.empty) { quizItemsContainer.innerHTML = `<p class="leaderboard-placeholder">No quizzes found in "${categoryName}".</p>`; return; } querySnapshot.forEach((docSnap, index) => { const data = docSnap.data(); const div = document.createElement("div"); div.className = "quiz-item"; div.innerHTML = `<strong>${data.title}</strong><small>${data.description || 'No description'}</small>`; div.onclick = () => startQuiz(docSnap.id, data); quizItemsContainer.appendChild(div); setTimeout(() => div.classList.add('visible'), index * 100); }); } catch (error) { console.error(`Error loading quizzes for category ${categoryName}: `, error); showCustomModal(`Could not load quizzes for ${categoryName}.`, "Loading Error", "error"); quizItemsContainer.innerHTML = `<p class="leaderboard-placeholder" style="color:red;">Failed to load quizzes for "${categoryName}".</p>`; } }
-    window.showCategoryView = function() { /* ... (no changes in this function) ... */ quizListHeading.textContent = 'Quiz Categories'; quizItemsContainer.style.display = 'none'; quizItemsContainer.innerHTML = ''; backToCategoriesBtn.style.display = 'none'; backToCategoriesBtn.classList.remove('visible'); categoryGridContainer.style.display = 'grid'; loadCategories(); }
-    window.login = function () { /* ... (no changes in this function) ... */ const e=emailInput.value,p=passwordInput.value; if(!e||!p){showCustomModal("Please enter both email and password.","Login Error","error");return;} const lB=document.querySelector("#login-box button[onclick='login()']");lB.disabled=true;lB.textContent="Logging in...";signInWithEmailAndPassword(auth,e,p).catch(er=>{showCustomModal("Login failed: "+er.message,"Login Error","error");}).finally(()=>{if(!auth.currentUser){lB.disabled=false;lB.textContent="Login";}});};
-    window.register = async function () { /* ... (no changes in this function) ... */ const nR=regNameInput.value.trim(),eR=regEmailInput.value.trim(),pR=regPasswordInput.value; const rB=document.querySelector("#register-form button[onclick='register()']"); if(!nR||!eR||!pR){showCustomModal("Please fill all registration fields.","Reg Error","error");return;}if(pR.length<6){showCustomModal("Password should be at least 6 characters.","Reg Error","error");return;}rB.disabled=true;rB.textContent="Registering...";try{const uC=await createUserWithEmailAndPassword(auth,eR,pR);await setDoc(doc(db,"users",uC.user.uid),{name:nR,email:eR,uid:uC.user.uid});showCustomModal("Registration successful! Please login.","Success","success",showLoginForm);}catch(er){showCustomModal("Registration failed: "+er.message,"Reg Error","error");}finally{rB.disabled=false;rB.textContent="Register";}};
-    window.logout = function() { /* ... (no changes in this function) ... */ signOut(auth).catch(e => showCustomModal("Logout failed: " + e.message, "Logout Error", "error")); };
-    window.showRegisterForm = function () { /* ... (no changes in this function) ... */ document.querySelector("#login-box > h2").style.display="none"; loginFieldsGroup.classList.add('hidden'); document.getElementById("auth-toggle").style.display="none"; registerFormElement.style.display = "block"; void registerFormElement.offsetHeight; registerFormElement.classList.add("visible"); const regFormH2 = document.querySelector("#register-form > h2"); if(regFormH2) regFormH2.style.display="block"; };
-    window.showLoginForm = function () { /* ... (no changes in this function) ... */ document.querySelector("#login-box > h2").style.display="block"; registerFormElement.classList.remove("visible"); setTimeout(() => { registerFormElement.style.display = "none"; loginFieldsGroup.classList.remove('hidden'); const lB=document.querySelector("#login-box button[onclick='login()']"); lB.disabled=false;lB.textContent="Login"; document.getElementById("auth-toggle").style.display="block"; const regFormH2 = document.querySelector("#register-form > h2"); if(regFormH2) regFormH2.style.display="none"; regNameInput.value="";regEmailInput.value="";regPasswordInput.value=""; }, 400); };
+    async function loadCategories() { categoryGridContainer.innerHTML = '<p class="leaderboard-placeholder" style="grid-column: 1 / -1;">Loading categories...</p>'; quizItemsContainer.style.display = 'none'; quizItemsContainer.innerHTML = ''; categoryGridContainer.style.display = 'grid'; backToCategoriesBtn.style.display = 'none'; backToCategoriesBtn.classList.remove('visible'); quizListHeading.textContent = 'Quiz Categories'; try { const categoriesQuery = query(collection(db, "categories"), orderBy("order", "asc")); const categoriesSnapshot = await getDocs(categoriesQuery); categoryGridContainer.innerHTML = ''; addCategoryCard({ name: "All Quizzes", special: "all", iconClass: "fas fa-layer-group" }); if (categoriesSnapshot.empty) { console.log("No custom categories found in Firestore."); } else { categoriesSnapshot.forEach(docSnap => { addCategoryCard(docSnap.data(), docSnap.id); }); } const cards = categoryGridContainer.querySelectorAll('.category-card'); cards.forEach((card, index) => { setTimeout(() => card.classList.add('visible'), index * 100); }); } catch (error) { console.error("Error loading categories: ", error); showCustomModal("Could not load quiz categories.", "Loading Error", "error"); categoryGridContainer.innerHTML = '<p class="leaderboard-placeholder" style="grid-column: 1 / -1; color:red;">Failed to load categories.</p>'; if (!categoryGridContainer.querySelector('.category-card[data-name="All Quizzes"]')) { addCategoryCard({ name: "All Quizzes", special: "all", iconClass: "fas fa-layer-group" }); setTimeout(() => categoryGridContainer.querySelector('.category-card').classList.add('visible'), 0); } } }
+    function addCategoryCard(categoryData, categoryId = null) { const card = document.createElement('div'); card.className = 'category-card'; if(categoryData.name) card.dataset.name = categoryData.name; if (categoryData.color) card.style.backgroundColor = categoryData.color; const iconContainer = document.createElement('div'); iconContainer.className = 'card-icon'; if (categoryData.iconClass) { const i = document.createElement('i'); i.className = categoryData.iconClass; iconContainer.appendChild(i); } else if (categoryData.imageUrl) { const img = document.createElement('img'); img.src = categoryData.imageUrl; img.alt = categoryData.name || 'Category Image'; iconContainer.appendChild(img); } else { const span = document.createElement('span'); span.textContent = categoryData.name ? categoryData.name.charAt(0).toUpperCase() : 'Q'; iconContainer.appendChild(span); } const nameSpan = document.createElement('span'); nameSpan.className = 'card-name'; nameSpan.textContent = categoryData.name || 'Unnamed Category'; card.appendChild(iconContainer); card.appendChild(nameSpan); if (typeof categoryData.quizCount === 'number') { const countSpan = document.createElement('span'); countSpan.className = 'card-quiz-count'; countSpan.textContent = `${categoryData.quizCount} Quizzes`; card.appendChild(countSpan); } card.onclick = () => showQuizzesForCategory(categoryData.special === "all" ? "all" : categoryData.name); categoryGridContainer.appendChild(card); }
+    async function showQuizzesForCategory(categoryName) { quizItemsContainer.innerHTML = '<p class="leaderboard-placeholder">Loading quizzes...</p>'; quizItemsContainer.style.display = 'block'; categoryGridContainer.style.display = 'none'; backToCategoriesBtn.style.display = 'inline-block'; setTimeout(() => backToCategoriesBtn.classList.add('visible'), 50); quizListHeading.textContent = categoryName === 'all' ? 'All Quizzes' : `Quizzes in ${categoryName}`; try { let quizzesQuery; if (categoryName === 'all') { quizzesQuery = collection(db, "quizzes"); } else { quizzesQuery = query(collection(db, "quizzes"), where("category", "==", categoryName)); } const querySnapshot = await getDocs(quizzesQuery); quizItemsContainer.innerHTML = ''; if (querySnapshot.empty) { quizItemsContainer.innerHTML = `<p class="leaderboard-placeholder">No quizzes found in "${categoryName}".</p>`; return; } querySnapshot.forEach((docSnap, index) => { const data = docSnap.data(); const div = document.createElement("div"); div.className = "quiz-item"; div.innerHTML = `<strong>${data.title}</strong><small>${data.description || 'No description'}</small>`; div.onclick = () => startQuiz(docSnap.id, data); quizItemsContainer.appendChild(div); setTimeout(() => div.classList.add('visible'), index * 100); }); } catch (error) { console.error(`Error loading quizzes for category ${categoryName}: `, error); showCustomModal(`Could not load quizzes for ${categoryName}.`, "Loading Error", "error"); quizItemsContainer.innerHTML = `<p class="leaderboard-placeholder" style="color:red;">Failed to load quizzes for "${categoryName}".</p>`; } }
+    window.showCategoryView = function() { quizListHeading.textContent = 'Quiz Categories'; quizItemsContainer.style.display = 'none'; quizItemsContainer.innerHTML = ''; backToCategoriesBtn.style.display = 'none'; backToCategoriesBtn.classList.remove('visible'); categoryGridContainer.style.display = 'grid'; loadCategories(); }
+    window.login = function () { const e=emailInput.value,p=passwordInput.value; if(!e||!p){showCustomModal("Please enter both email and password.","Login Error","error");return;} const lB=document.querySelector("#login-box button[onclick='login()']");lB.disabled=true;lB.textContent="Logging in...";signInWithEmailAndPassword(auth,e,p).catch(er=>{showCustomModal("Login failed: "+er.message,"Login Error","error");}).finally(()=>{if(!auth.currentUser){lB.disabled=false;lB.textContent="Login";}});};
+    window.register = async function () { const nR=regNameInput.value.trim(),eR=regEmailInput.value.trim(),pR=regPasswordInput.value; const rB=document.querySelector("#register-form button[onclick='register()']"); if(!nR||!eR||!pR){showCustomModal("Please fill all registration fields.","Reg Error","error");return;}if(pR.length<6){showCustomModal("Password should be at least 6 characters.","Reg Error","error");return;}rB.disabled=true;rB.textContent="Registering...";try{const uC=await createUserWithEmailAndPassword(auth,eR,pR);await setDoc(doc(db,"users",uC.user.uid),{name:nR,email:eR,uid:uC.user.uid});showCustomModal("Registration successful! Please login.","Success","success",showLoginForm);}catch(er){showCustomModal("Registration failed: "+er.message,"Reg Error","error");}finally{rB.disabled=false;rB.textContent="Register";}};
+    window.logout = function() { signOut(auth).catch(e => showCustomModal("Logout failed: " + e.message, "Logout Error", "error")); };
+    window.showRegisterForm = function () { document.querySelector("#login-box > h2").style.display="none"; loginFieldsGroup.classList.add('hidden'); document.getElementById("auth-toggle").style.display="none"; registerFormElement.style.display = "block"; void registerFormElement.offsetHeight; registerFormElement.classList.add("visible"); const regFormH2 = document.querySelector("#register-form > h2"); if(regFormH2) regFormH2.style.display="block"; };
+    window.showLoginForm = function () { document.querySelector("#login-box > h2").style.display="block"; registerFormElement.classList.remove("visible"); setTimeout(() => { registerFormElement.style.display = "none"; loginFieldsGroup.classList.remove('hidden'); const lB=document.querySelector("#login-box button[onclick='login()']"); lB.disabled=false;lB.textContent="Login"; document.getElementById("auth-toggle").style.display="block"; const regFormH2 = document.querySelector("#register-form > h2"); if(regFormH2) regFormH2.style.display="none"; regNameInput.value="";regEmailInput.value="";regPasswordInput.value=""; }, 400); };
 
     function resetQuizState() {
         isPreviewMode = false;
         currentQuizData = null;
-        // Resetting UI elements that might be specific to quiz/preview
         quizTitleElement.textContent = "";
         quizDescriptionElement.style.display = "block";
         progressBarContainer.style.display = "block";
@@ -503,18 +549,17 @@
         scoreBoxDiv.classList.remove('visible');
         questionBoxDiv.innerHTML = "";
         
-        // Hide all action buttons initially, startQuiz or finalizeQuiz will show relevant ones
         newNextBtnQuiz.style.display = 'none';
         submitBtn.style.display = 'none';
         previewAnswersBtn.style.display = 'none';
         prevPreviewBtn.style.display = 'none';
         nextPreviewBtn.style.display = 'none';
-        backToQuizzesBtnFromQuiz.style.display = 'block'; // This is usually always visible in quiz-box
+        backToQuizzesBtnFromQuiz.style.display = 'block'; 
         backToQuizzesBtnFromQuiz.textContent = "Back to Quizzes";
     }
 
     async function startQuiz(id, quizData) { 
-        resetQuizState(); // Ensure clean state before starting
+        resetQuizState(); 
         quizIdForDb=id;
         if(quizData){currentQuizData=quizData;}
         else{
@@ -532,7 +577,7 @@
         quizDescriptionElement.style.display=currentQuizData.description?"block":"none";
         progressBarContainer.style.display="block";
         scoreBoxDiv.classList.remove('visible'); 
-        scoreBoxDiv.innerHTML = ""; // Clear score from previous quiz
+        scoreBoxDiv.innerHTML = ""; 
         newNextBtnQuiz.style.display='block';
         newNextBtnQuiz.disabled=true;
         submitBtn.style.display="none";
@@ -546,21 +591,21 @@
         renderQuestion();
     }
     
-    function renderQuestion() { /* ... (no changes in this function, but ensure it shows only relevant buttons) ... */ questionBoxDiv.style.opacity = 0; questionBoxDiv.classList.add('loading'); setTimeout(() => { if(!currentQuizData||!currentQuizData.questions||currentQuestionIndex>=currentQuizData.questions.length){if(currentQuizData&&currentQuizData.questions&&answersGiven.every(a=>a))finalizeQuiz();return;} const q=currentQuizData.questions[currentQuestionIndex]; questionBoxDiv.innerHTML=`<h3>Q${currentQuestionIndex+1}: ${q.question}</h3>`; q.options.forEach((oT, index)=>{ const b=document.createElement("button"); b.className="option-btn"; b.textContent=oT; b.style.opacity = 0; b.style.transform = 'translateY(10px)'; b.style.transition = `opacity 0.3s ease ${index * 0.05}s, transform 0.3s ease ${index * 0.05}s`; if(answersGiven[currentQuestionIndex]){ b.disabled=true; if(oT===selectedOptionsMap[currentQuestionIndex])b.classList.add(oT===q.answer?'correct':'incorrect'); else if(oT===q.answer)b.classList.add('correct'); }else{ b.onclick=()=>handleAnswerSelection(b,oT,q.answer); } questionBoxDiv.appendChild(b); setTimeout(() => { b.style.opacity = 1; b.style.transform = 'translateY(0)'; }, 50); }); newNextBtnQuiz.style.display='block'; newNextBtnQuiz.disabled=true; submitBtn.style.display='none'; previewAnswersBtn.style.display = 'none'; prevPreviewBtn.style.display = 'none'; nextPreviewBtn.style.display = 'none'; if(answersGiven[currentQuestionIndex]){newNextBtnQuiz.disabled=false;} if(currentQuestionIndex===currentQuizData.questions.length-1){newNextBtnQuiz.style.display='none';if(answersGiven[currentQuestionIndex]){submitBtn.style.display='block';}} if(answersGiven.every(a=>a===true)){submitBtn.style.display='block';newNextBtnQuiz.style.display='none';} updateProgressBar(); questionBoxDiv.style.opacity = 1; questionBoxDiv.classList.remove('loading'); }, 300); }
-    function updateProgressBar() { /* ... (no changes) ... */ const ansC=answersGiven.filter(a=>a).length; const totQ=currentQuizData?currentQuizData.questions.length:0; const pc=totQ>0?(ansC/totQ)*100:0; progressBarElement.style.width=pc+"%";}
-    window.handleAnswerSelection = function (btn, selected, correct) { /* ... (no changes) ... */ if(answersGiven[currentQuestionIndex])return;const aOB=questionBoxDiv.querySelectorAll(".option-btn");aOB.forEach(b=>{b.disabled=true;if(b.textContent===correct)b.classList.add('correct'); else if (b !== btn) b.style.opacity = 0.6; });if(selected===correct){btn.classList.add('correct');currentScore++;}else{btn.classList.add('incorrect');}answersGiven[currentQuestionIndex]=true;selectedOptionsMap[currentQuestionIndex]=selected;questionsAttempted++;updateProgressBar();newNextBtnQuiz.disabled=true;newNextBtnQuiz.style.display='block';submitBtn.style.display='none';if(currentQuestionIndex<currentQuizData.questions.length-1){newNextBtnQuiz.disabled=false;}else{newNextBtnQuiz.style.display='none';submitBtn.style.display='block';}if(answersGiven.every(a=>a===true)){submitBtn.style.display='block';newNextBtnQuiz.style.display='none';}};
+    function renderQuestion() { questionBoxDiv.style.opacity = 0; questionBoxDiv.classList.add('loading'); setTimeout(() => { if(!currentQuizData||!currentQuizData.questions||currentQuestionIndex>=currentQuizData.questions.length){if(currentQuizData&&currentQuizData.questions&&answersGiven.every(a=>a))finalizeQuiz();return;} const q=currentQuizData.questions[currentQuestionIndex]; questionBoxDiv.innerHTML=`<h3>Q${currentQuestionIndex+1}: ${q.question}</h3>`; q.options.forEach((oT, index)=>{ const b=document.createElement("button"); b.className="option-btn"; b.textContent=oT; b.style.opacity = 0; b.style.transform = 'translateY(10px)'; b.style.transition = `opacity 0.3s ease ${index * 0.05}s, transform 0.3s ease ${index * 0.05}s`; if(answersGiven[currentQuestionIndex]){ b.disabled=true; if(oT===selectedOptionsMap[currentQuestionIndex])b.classList.add(oT===q.answer?'correct':'incorrect'); else if(oT===q.answer)b.classList.add('correct'); }else{ b.onclick=()=>handleAnswerSelection(b,oT,q.answer); } questionBoxDiv.appendChild(b); setTimeout(() => { b.style.opacity = 1; b.style.transform = 'translateY(0)'; }, 50); }); newNextBtnQuiz.style.display='block'; newNextBtnQuiz.disabled=true; submitBtn.style.display='none'; previewAnswersBtn.style.display = 'none'; prevPreviewBtn.style.display = 'none'; nextPreviewBtn.style.display = 'none'; if(answersGiven[currentQuestionIndex]){newNextBtnQuiz.disabled=false;} if(currentQuestionIndex===currentQuizData.questions.length-1){newNextBtnQuiz.style.display='none';if(answersGiven[currentQuestionIndex]){submitBtn.style.display='block';}} if(answersGiven.every(a=>a===true)){submitBtn.style.display='block';newNextBtnQuiz.style.display='none';} updateProgressBar(); questionBoxDiv.style.opacity = 1; questionBoxDiv.classList.remove('loading'); }, 300); }
+    function updateProgressBar() { const ansC=answersGiven.filter(a=>a).length; const totQ=currentQuizData?currentQuizData.questions.length:0; const pc=totQ>0?(ansC/totQ)*100:0; progressBarElement.style.width=pc+"%";}
+    window.handleAnswerSelection = function (btn, selected, correct) { if(answersGiven[currentQuestionIndex])return;const aOB=questionBoxDiv.querySelectorAll(".option-btn");aOB.forEach(b=>{b.disabled=true;if(b.textContent===correct)b.classList.add('correct'); else if (b !== btn) b.style.opacity = 0.6; });if(selected===correct){btn.classList.add('correct');currentScore++;}else{btn.classList.add('incorrect');}answersGiven[currentQuestionIndex]=true;selectedOptionsMap[currentQuestionIndex]=selected;questionsAttempted++;updateProgressBar();newNextBtnQuiz.disabled=true;newNextBtnQuiz.style.display='block';submitBtn.style.display='none';if(currentQuestionIndex<currentQuizData.questions.length-1){newNextBtnQuiz.disabled=false;}else{newNextBtnQuiz.style.display='none';submitBtn.style.display='block';}if(answersGiven.every(a=>a===true)){submitBtn.style.display='block';newNextBtnQuiz.style.display='none';}};
     newNextBtnQuiz.onclick = () => { if (!newNextBtnQuiz.disabled && currentQuestionIndex < currentQuizData.questions.length - 1) { currentQuestionIndex++; renderQuestion(); }};
     submitBtn.onclick = async () => { if(!answersGiven.every(a=>a===true)){showCustomModal("You have unanswered questions. Submit anyway?","Confirm Submission","confirm",()=>{finalizeQuiz();},()=>{});}else{finalizeQuiz();}};
     
     async function finalizeQuiz() { 
         questionBoxDiv.style.opacity = 0; 
         setTimeout(async () => {
-            questionBoxDiv.innerHTML=``; // Clear questions, score will be primary focus initially
+            questionBoxDiv.innerHTML=``; 
             questionBoxDiv.style.opacity = 1; 
             
             submitBtn.style.display="none";
             newNextBtnQuiz.style.display="none";
-            previewAnswersBtn.style.display = 'block'; // Show preview button
+            previewAnswersBtn.style.display = 'block'; 
             backToQuizzesBtnFromQuiz.style.display = 'block';
 
             quizDescriptionElement.style.display="none";
@@ -571,7 +616,7 @@
             
             quizTitleElement.textContent = "Quiz Completed!";
 
-            if(currentUser && !isPreviewMode){ // Only save if not already in preview (though isPreviewMode should be false here)
+            if(currentUser && !isPreviewMode){ 
                 try{
                     await addDoc(collection(db,"results"),{userId:currentUser.uid,userName:currentUserName,quizTitle:currentQuizData.title,quizId:quizIdForDb,score:currentScore,totalQuestions:currentQuizData.questions.length,attempted:questionsAttempted,timestamp:new Date()});
                 }catch(e){
@@ -600,7 +645,7 @@
         nextPreviewBtn.style.display = 'block';
         backToQuizzesBtnFromQuiz.style.display = 'block';
         
-        scoreBoxDiv.classList.add('visible'); // Ensure score is visible
+        scoreBoxDiv.classList.add('visible'); 
         renderPreviewQuestion(currentPreviewQuestionIndex);
     }
 
@@ -617,12 +662,12 @@
                 const optionButton = document.createElement("button");
                 optionButton.className = "option-btn";
                 optionButton.textContent = optionText;
-                optionButton.disabled = true; // Options are not clickable in preview
+                optionButton.disabled = true; 
 
                 if (optionText === userAnswer) {
                     optionButton.classList.add('user-selected');
                     if (userAnswer === correctAnswer) {
-                        optionButton.classList.add('actual-correct'); // Also user-selected-correct via CSS
+                        optionButton.classList.add('actual-correct'); 
                     } else {
                         optionButton.classList.add('user-selected-incorrect');
                     }
@@ -635,7 +680,7 @@
 
             prevPreviewBtn.disabled = questionIdx === 0;
             nextPreviewBtn.disabled = questionIdx === currentQuizData.questions.length - 1;
-        }, 200); // Short fade for preview question
+        }, 200); 
     }
 
     prevPreviewBtn.onclick = () => {
@@ -653,15 +698,108 @@
     };
 
     window.goBackToQuizList = function () { 
-        resetQuizState(); // This will hide preview buttons and clear preview mode
+        resetQuizState(); 
         showQuizListView(); 
     };
     window.goBackToQuizListFromLeaderboard = function() { showQuizListView(); };
     window.goBackToQuizListFromProfile = function() { showQuizListView(); };
 
-    async function loadLeaderboard() { /* ... (no changes) ... */ const lbTBody = document.getElementById("leaderboard-table").querySelector("tbody"); lbTBody.innerHTML = "<tr class='leaderboard-placeholder'><td colspan='4'>Loading leaderboard...</td></tr>"; try { const resultsSnapshot = await getDocs(collection(db, "results")); const userAggregatedStats = {}; resultsSnapshot.forEach(resultDoc => { const resultData = resultDoc.data(); if (!resultData.userId || typeof resultData.score !== 'number') return; if (!userAggregatedStats[resultData.userId]) { userAggregatedStats[resultData.userId] = { totalScore: 0, quizCount: 0, name: resultData.userName || 'Anonymous', uid: resultData.userId }; } userAggregatedStats[resultData.userId].totalScore += resultData.score; userAggregatedStats[resultData.userId].quizCount += 1; if (resultData.userName && resultData.userName !== 'Anonymous') { userAggregatedStats[resultData.userId].name = resultData.userName; } }); const usersToFetchNames = Object.values(userAggregatedStats).filter(user => user.name === 'Anonymous' || !user.name); if (usersToFetchNames.length > 0) { const userDocPromises = usersToFetchNames.map(user => getDoc(doc(db, "users", user.uid)).catch(e => { console.warn(`Failed to fetch user doc for ${user.uid}:`, e); return null; })); const userDocSnapshots = await Promise.all(userDocPromises); userDocSnapshots.forEach(userDocSnap => { if (userDocSnap && userDocSnap.exists()) { const userData = userDocSnap.data(); if (userAggregatedStats[userDocSnap.id]) { userAggregatedStats[userDocSnap.id].name = userData.name || 'User'; } } }); } const leaderboardArray = Object.values(userAggregatedStats).sort((a, b) => { if (b.totalScore === a.totalScore) { return a.quizCount - b.quizCount;  } return b.totalScore - a.totalScore; }); lbTBody.innerHTML = ""; if (leaderboardArray.length === 0) { lbTBody.innerHTML = "<tr class='leaderboard-placeholder'><td colspan='4'>No scores yet! Be the first.</td></tr>"; return; } leaderboardArray.forEach((entry, index) => { const row = lbTBody.insertRow(); row.style.animationDelay = `${index * 0.07}s`; if (currentUser && entry.uid === currentUser.uid) { row.classList.add("current-user-leaderboard"); } row.insertCell().textContent = index + 1; row.insertCell().textContent = entry.name; row.insertCell().textContent = entry.quizCount; row.insertCell().textContent = entry.totalScore; }); } catch (e) { console.error("Error loading leaderboard: ", e); lbTBody.innerHTML = "<tr class='leaderboard-placeholder'><td colspan='4' style='color:red;'>Could not load leaderboard.</td></tr>"; showCustomModal("Failed to load leaderboard: " + e.message, "Leaderboard Error", "error"); } }
-    async function fetchUserProfileStats() { /* ... (no changes) ... */ if (!currentUser) return { quizzesTaken: 0, overallScore: 0 }; let quizzesTaken = 0, overallScore = 0; try { const q = query(collection(db, "results"), where("userId", "==", currentUser.uid)); const querySnapshot = await getDocs(q); quizzesTaken = querySnapshot.size; querySnapshot.forEach(doc => { if (typeof doc.data().score === 'number') { overallScore += doc.data().score; } }); return { quizzesTaken, overallScore }; } catch (e) { console.error("Error fetching user stats:", e); return { quizzesTaken: "N/A", overallScore: "N/A" }; } }
-    async function loadProfile() { /* ... (no changes) ... */ if (!currentUser) { showLoginView(); return; } const profileItems = profileDashboardBox.querySelectorAll('.profile-info p'); profileItems.forEach(p => { p.style.opacity = 0; p.style.transform = 'translateY(15px)'; }); profileNameSpan.textContent = currentUserName; profileEmailSpan.textContent = currentUser.email; profileQuizzesTakenSpan.textContent = "Loading..."; profileQuizzesTakenSpan.style.color = ""; profileOverallScoreSpan.textContent = "Loading..."; profileOverallScoreSpan.style.color = ""; const stats = await fetchUserProfileStats(); profileQuizzesTakenSpan.textContent = stats.quizzesTaken; if (stats.quizzesTaken === "N/A") { profileQuizzesTakenSpan.style.color = "#e74c3c"; } profileOverallScoreSpan.textContent = stats.overallScore; if (stats.overallScore === "N/A") { profileOverallScoreSpan.style.color = "#e74c3c"; } profileItems.forEach((p, index) => { setTimeout(() => { p.style.opacity = 1; p.style.transform = 'translateY(0)'; }, index * 100 + 50); }); }
+    async function loadLeaderboard() {
+        const lbTBody = document.getElementById("leaderboard-table").querySelector("tbody");
+        lbTBody.innerHTML = "<tr class='leaderboard-placeholder'><td colspan='4'>Loading leaderboard...</td></tr>";
+        try {
+            const resultsSnapshot = await getDocs(collection(db, "results")); 
+            const userAggregatedStats = {};
+
+            resultsSnapshot.forEach(resultDoc => {
+                const resultData = resultDoc.data();
+                if (!resultData.userId || typeof resultData.score !== 'number') return; 
+
+                if (!userAggregatedStats[resultData.userId]) {
+                    userAggregatedStats[resultData.userId] = {
+                        totalScore: 0,
+                        quizCount: 0,
+                        name: resultData.userName || 'Anonymous',
+                        uid: resultData.userId
+                    };
+                }
+                userAggregatedStats[resultData.userId].totalScore += resultData.score;
+                userAggregatedStats[resultData.userId].quizCount += 1;
+                if (resultData.userName && resultData.userName !== 'Anonymous') {
+                     userAggregatedStats[resultData.userId].name = resultData.userName;
+                }
+            });
+
+            const usersToFetchNames = Object.values(userAggregatedStats).filter(user => user.name === 'Anonymous' || !user.name);
+            if (usersToFetchNames.length > 0) {
+                const userDocPromises = usersToFetchNames.map(user => getDoc(doc(db, "users", user.uid)).catch(e => { console.warn(`Failed to fetch user doc for ${user.uid}:`, e); return null; }));
+                const userDocSnapshots = await Promise.all(userDocPromises);
+                userDocSnapshots.forEach(userDocSnap => {
+                    if (userDocSnap && userDocSnap.exists()) {
+                        const userData = userDocSnap.data();
+                        if (userAggregatedStats[userDocSnap.id]) {
+                            userAggregatedStats[userDocSnap.id].name = userData.name || 'User';
+                        }
+                    }
+                });
+            }
+
+            const leaderboardArray = Object.values(userAggregatedStats).sort((a, b) => {
+                if (b.totalScore === a.totalScore) { return a.quizCount - b.quizCount;  } 
+                return b.totalScore - a.totalScore; 
+            });
+
+            lbTBody.innerHTML = ""; 
+            if (leaderboardArray.length === 0) {
+                lbTBody.innerHTML = "<tr class='leaderboard-placeholder'><td colspan='4'>No scores yet! Be the first.</td></tr>";
+                return;
+            }
+
+            leaderboardArray.forEach((entry, index) => {
+                const row = lbTBody.insertRow();
+                row.style.animationDelay = `${index * 0.07}s`;
+                
+                if (currentUser && entry.uid === currentUser.uid) {
+                    row.classList.add("current-user-leaderboard");
+                }
+                if (index < 3) {
+                    row.classList.add(`top-rank-${index + 1}`);
+                }
+
+                row.insertCell().textContent = index + 1; // Rank cell
+
+                const nameCell = row.insertCell();
+                if (index < 3 && leaderboardArray.length > index) { // Check if there are enough players for top 3
+                    const badge = document.createElement('i');
+                    badge.classList.add('fas', 'rank-badge');
+                    if (index === 0) {
+                        badge.classList.add('fa-crown', 'rank-1-badge');
+                        badge.title = "1st Place";
+                    } else if (index === 1) {
+                        badge.classList.add('fa-medal', 'rank-2-badge');
+                        badge.title = "2nd Place";
+                    } else if (index === 2) {
+                        badge.classList.add('fa-award', 'rank-3-badge');
+                        badge.title = "3rd Place";
+                    }
+                    nameCell.appendChild(badge);
+                    nameCell.append(` ${entry.name}`); // Add a space before the name
+                } else {
+                    nameCell.textContent = entry.name;
+                }
+                
+                row.insertCell().textContent = entry.quizCount;
+                row.insertCell().textContent = entry.totalScore;
+            });
+        } catch (e) {
+            console.error("Error loading leaderboard: ", e);
+            lbTBody.innerHTML = "<tr class='leaderboard-placeholder'><td colspan='4' style='color:red;'>Could not load leaderboard.</td></tr>";
+            showCustomModal("Failed to load leaderboard: " + e.message, "Leaderboard Error", "error");
+        }
+    }
+
+    async function fetchUserProfileStats() { if (!currentUser) return { quizzesTaken: 0, overallScore: 0 }; let quizzesTaken = 0, overallScore = 0; try { const q = query(collection(db, "results"), where("userId", "==", currentUser.uid)); const querySnapshot = await getDocs(q); quizzesTaken = querySnapshot.size; querySnapshot.forEach(doc => { if (typeof doc.data().score === 'number') { overallScore += doc.data().score; } }); return { quizzesTaken, overallScore }; } catch (e) { console.error("Error fetching user stats:", e); return { quizzesTaken: "N/A", overallScore: "N/A" }; } }
+    async function loadProfile() { if (!currentUser) { showLoginView(); return; } const profileItems = profileDashboardBox.querySelectorAll('.profile-info p'); profileItems.forEach(p => { p.style.opacity = 0; p.style.transform = 'translateY(15px)'; }); profileNameSpan.textContent = currentUserName; profileEmailSpan.textContent = currentUser.email; profileQuizzesTakenSpan.textContent = "Loading..."; profileQuizzesTakenSpan.style.color = ""; profileOverallScoreSpan.textContent = "Loading..."; profileOverallScoreSpan.style.color = ""; const stats = await fetchUserProfileStats(); profileQuizzesTakenSpan.textContent = stats.quizzesTaken; if (stats.quizzesTaken === "N/A") { profileQuizzesTakenSpan.style.color = "#e74c3c"; } profileOverallScoreSpan.textContent = stats.overallScore; if (stats.overallScore === "N/A") { profileOverallScoreSpan.style.color = "#e74c3c"; } profileItems.forEach((p, index) => { setTimeout(() => { p.style.opacity = 1; p.style.transform = 'translateY(0)'; }, index * 100 + 50); }); }
     
     if (!auth.currentUser) {
        showLoginView(); 
