@@ -1,810 +1,1451 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Quiz Portal</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; }
-    body {
-      font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-      background: #f0f4f8;
-      padding: 0;
-      color: #333;
-      line-height: 1.6;
-      overflow-x: hidden; /* Prevent horizontal scrollbars during animations */
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #2c3e50;
-      font-size: 1.5rem;
-    }
-     /* Engaging Subtitle for Leaderboard */
-    .leaderboard-box .leaderboard-subtitle {
-        text-align: center;
-        font-size: 0.95rem;
-        color: #566573;
-        margin-top: -15px; /* Adjust to pull it closer to h2 */
-        margin-bottom: 20px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>QuizFlex - Modern Quiz Experience</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Modern CSS Reset */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
+        :root {
+            /* Color System */
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --white: #ffffff;
 
-    .app-header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 12px 20px; background-color: #ffffff;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: sticky;
-      top: 0; left: 0; width: 100%; z-index: 1000;
-      transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-    }
-    .app-header.hidden-initial {
+            /* Spacing */
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.25rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-10: 2.5rem;
+            --space-12: 3rem;
+
+            /* Shadow */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-2xl: 2rem;
+
+            /* Transition */
+            --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            line-height: 1.5;
+            background-color: var(--gray-100);
+            color: var(--gray-900);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* App Container */
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--white);
+            position: relative;
+            box-shadow: var(--shadow-lg);
+        }
+
+        @media (min-width: 481px) {
+            .app-container {
+                margin: var(--space-4) auto;
+                min-height: calc(100vh - 2rem);
+                border-radius: var(--radius-2xl);
+                overflow: hidden;
+            }
+        }
+
+        /* Header */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--gray-200);
+            padding: var(--space-4);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all var(--transition);
+        }
+
+        .app-header.hidden-initial {
+            transform: translate(-50%, -100%);
+            opacity: 0;
+        }
+
+        .header-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gray-100);
+            color: var(--primary);
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .header-icon:active {
+            transform: scale(0.95);
+            background: var(--gray-200);
+        }
+
+        .app-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            text-align: center;
+            margin: 0 var(--space-4);
+            flex: 1;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-top: calc(4rem + var(--space-4));
+            min-height: 100vh;
+            background: var(--gray-50);
+        }
+
+        /* Category Grid */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-4);
+            padding: var(--space-4);
+        }
+
+        .category-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-4);
+            cursor: pointer;
+            transition: all var(--transition);
+            border: 1px solid var(--gray-200);
+        }
+
+        .category-card:active {
+            transform: scale(0.98);
+            background: var(--gray-100);
+        }
+
+        .category-icon {
+            width: 3rem;
+            height: 3rem;
+            background: var(--primary-light);
+            color: var(--white);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .category-name {
+            font-weight: 600;
+            color: var(--gray-900);
+            text-align: center;
+        }
+
+        .category-count {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        /* Quiz List */
+        .quiz-list {
+            padding: var(--space-4);
+        }
+
+        .quiz-item {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            margin-bottom: var(--space-4);
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all var(--transition);
+            border: 1px solid var(--gray-200);
+        }
+
+        .quiz-item:active {
+            transform: scale(0.98);
+            background: var(--gray-100);
+        }
+
+        .quiz-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+
+        .quiz-description {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        /* Quiz Taking View */
+        .quiz-container {
+            padding: var(--space-4);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 4px;
+            background: var(--gray-200);
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--space-6);
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            transition: width var(--transition);
+        }
+
+        .question-box {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            margin-bottom: var(--space-6);
+            box-shadow: var(--shadow-md);
+        }
+
+        .question-text {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: var(--space-6);
+        }
+
+        .option-button {
+            width: 100%;
+            padding: var(--space-4) var(--space-6);
+            margin-bottom: var(--space-3);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            background: var(--white);
+            font-size: 1rem;
+            color: var(--gray-900);
+            text-align: left;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .option-button:hover:not(:disabled) {
+            background: var(--gray-100);
+            border-color: var(--primary);
+        }
+
+        .option-button:active:not(:disabled) {
+            transform: scale(0.99);
+        }
+
+        .option-button.correct {
+            background: var(--success);
+            color: var(--white);
+            border-color: var(--success);
+        }
+
+        .option-button.incorrect {
+            background: var(--error);
+            color: var(--white);
+            border-color: var(--error);
+        }
+
+        .option-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* Score View */
+        .score-container {
+            padding: var(--space-8);
+            text-align: center;
+        }
+
+        .score-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-4);
+        }
+
+        .score-details {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            margin-bottom: var(--space-6);
+            box-shadow: var(--shadow-md);
+        }
+
+        .score-item {
+            margin-bottom: var(--space-3);
+            display: flex;
+            justify-content: space-between;
+            padding: var(--space-2) 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .score-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .score-label {
+            color: var(--gray-600);
+        }
+
+        .score-value {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        /* Enhanced Leaderboard Styles */
+        .leaderboard-view {
+            padding: var(--space-4);
+        }
+
+        .leaderboard-header {
+            text-align: center;
+            margin-bottom: var(--space-6);
+        }
+
+        .leaderboard-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-2);
+        }
+
+        .leaderboard-subtitle {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+
+        .leaderboard-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+
+        .leaderboard-item {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            display: flex;
+            align-items: center;
+            box-shadow: var(--shadow);
+            transition: transform var(--transition);
+        }
+
+        .leaderboard-rank {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius);
+            background: var(--primary-light);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+
+        .rank-1 { background: linear-gradient(135deg, #FFD700, #FFA500); }
+        .rank-2 { background: linear-gradient(135deg, #C0C0C0, #A9A9A9); }
+        .rank-3 { background: linear-gradient(135deg, #CD7F32, #8B4513); }
+
+        .leaderboard-info {
+            flex: 1;
+            margin-left: var(--space-4);
+        }
+
+        .leaderboard-name {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+
+        .leaderboard-stats {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .leaderboard-score {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.125rem;
+        }
+
+        /* Enhanced Profile Styles */
+        .profile-view {
+            padding: var(--space-4);
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: var(--space-6);
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 auto var(--space-4);
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+
+        .profile-email {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+
+        .profile-stats {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            margin-bottom: var(--space-6);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--space-3) 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: var(--gray-600);
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .profile-actions {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+
+        /* Buttons */
+        .button {
+            width: 100%;
+            padding: var(--space-4);
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition);
+            text-align: center;
+            margin-bottom: var(--space-3);
+        }
+
+        .button-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .button-primary:active {
+            background: var(--primary-dark);
+            transform: scale(0.98);
+        }
+
+        .button-secondary {
+            background: var(--gray-100);
+            color: var(--gray-900);
+        }
+
+        .button-secondary:active {
+            background: var(--gray-200);
+            transform: scale(0.98);
+        }
+
+        /* Auth Forms */
+        .auth-container {
+            padding: var(--space-6);
+        }
+
+        .auth-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-6);
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: var(--space-4);
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: var(--space-2);
+            color: var(--gray-700);
+            font-size: 0.875rem;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: var(--space-4);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: all var(--transition);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Loading States */
+        .loading-spinner {
+            border: 3px solid var(--gray-200);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Toast Messages */
+        .toast {
+            position: fixed;
+            bottom: var(--space-6);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gray-900);
+            color: var(--white);
+            padding: var(--space-4) var(--space-6);
+            border-radius: var(--radius-lg);
+            font-size: 0.875rem;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity var(--transition);
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+
+        .mt-4 { margin-top: var(--space-4); }
+        .mb-4 { margin-bottom: var(--space-4); }
+        .mx-4 { margin-left: var(--space-4); margin-right: var(--space-4); }
+        .my-4 { margin-top: var(--space-4); margin-bottom: var(--space-4); }
+
+        /* Responsive Adjustments */
+        @media (max-width: 360px) {
+            .category-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .app-title {
+                font-size: 1rem;
+            }
+
+            .header-icon {
+                width: 2rem;
+                height: 2rem;
+                font-size: 1rem;
+            }
+        }
+        
+        /* Back Button Styles */
+.back-button {
+    position: absolute;
+    left: var(--space-4);
+    top: var(--space-4);
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+    border-radius: var(--radius-lg);
+    background: var(--gray-100);
+    color: var(--primary);
+    font-size: 1.25rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition);
+}
+
+.back-button:active {
+    transform: scale(0.95);
+    background: var(--gray-200);
+}
+
+/* Update Header Positions */
+.leaderboard-header, .profile-header {
+    position: relative;
+    padding-top: var(--space-4);
+}
+
+/* Adjust spacing for back button */
+.profile-header .profile-avatar {
+    margin-top: var(--space-8);
+}
+        /* Custom Popup Styles */
+.custom-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.custom-popup.show {
+    display: flex;
+}
+
+.popup-content {
+    background: var(--white);
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 320px;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    animation: popup-in 0.3s ease-out;
+}
+
+@keyframes popup-in {
+    0% {
+        transform: scale(0.9);
         opacity: 0;
-        transform: translateY(-100%);
     }
-    .app-header h1 {
-      font-size: 1.7rem; color: #2c3e50; margin: 0;
-      flex-grow: 1; text-align: center; font-weight: 600;
+    100% {
+        transform: scale(1);
+        opacity: 1;
     }
-    .header-icon {
-      width: 44px; height: 44px; border-radius: 50%; display: flex;
-      align-items: center; justify-content: center; color: white;
-      font-size: 1.4rem; 
-      font-weight: bold; cursor: pointer;
-      transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-      flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-    }
-    .header-icon i { 
-        line-height: 1; 
-    }
-    .header-icon:hover { transform: scale(1.08); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-    #leaderboard-icon-container { background-color: #e67e22; }
-    #leaderboard-icon-container:hover { background-color: #d35400; }
-    #profile-icon-container { background-color: #5dade2; }
-    #profile-icon-container:hover { background-color: #3498db; }
+}
 
-    .content-wrapper { padding: 15px; position: relative; }
+.popup-icon {
+    font-size: 2rem;
+    margin-bottom: var(--space-4);
+}
 
-    .view {
-      max-width: 700px;
-      margin: 20px auto;
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-      opacity: 1;
-      transform: translateY(0);
-      transition: opacity 0.4s ease-out, transform 0.4s ease-out;
-      will-change: opacity, transform;
-    }
-    .view.hidden {
-      opacity: 0;
-      transform: translateY(30px);
-      pointer-events: none;
-      position: absolute;
-      width: calc(100% - 30px);
-      left: 15px;
-    }
+.popup-icon .fa-check-circle {
+    color: var(--success);
+}
 
-    #category-grid-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 20px;
-        padding: 10px 0;
-    }
-    .category-card {
-        background-color: #3498db;
-        color: white;
-        padding: 20px 15px;
-        border-radius: 10px;
-        text-align: center;
-        cursor: pointer;
-        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out, opacity 0.3s ease, transform 0.3s ease;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-around;
-        min-height: 150px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    .category-card.visible { opacity: 1; transform: translateY(0); }
-    .category-card:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 8px 15px rgba(0,0,0,0.2); }
-    .category-card .card-icon { font-size: 3rem; line-height: 1; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
-    .category-card .card-icon img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px; }
-    .category-card .card-name { font-size: 1.2rem; font-weight: 600; margin-bottom: 5px; word-break: break-word; }
-    .category-card .card-quiz-count { font-size: 0.8rem; opacity: 0.75; }
-    #back-to-categories-btn { display: none; margin-bottom: 20px; background-color: #7f8c8d; width: auto; opacity: 0; transform: translateY(-10px); transition: opacity 0.3s ease, transform 0.3s ease; }
-    #back-to-categories-btn.visible { opacity: 1; transform: translateY(0); }
-    #back-to-categories-btn:hover { background-color: #6c7a7b; }
+.popup-icon .fa-exclamation-circle {
+    color: var(--error);
+}
 
-    .quiz-item {
-      background: #3498db; color: white; padding: 15px 20px; border-radius: 10px;
-      margin: 12px 0; font-size: 1.1rem; cursor: pointer;
-      transition: background-color 0.2s ease-in-out, transform 0.15s ease-in-out, opacity 0.3s ease, box-shadow 0.2s ease;
-      text-align: left; opacity: 0; transform: translateX(-20px); box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .quiz-item.visible { opacity: 1; transform: translateX(0); }
-    .quiz-item strong { display: block; margin-bottom: 5px; }
-    .quiz-item small { font-size: 0.85rem; opacity: 0.9; }
-    .quiz-item:hover { background: #2980b9; transform: translateY(-3px) translateX(0px) scale(1.01); box-shadow: 0 5px 10px rgba(0,0,0,0.15); }
+.popup-icon .fa-info-circle {
+    color: var(--primary);
+}
 
-    .quiz-header { display: flex; justify-content: center; align-items: center; margin-bottom: 15px; }
-    #quiz-title { flex-grow: 1; text-align: center; }
+.popup-message {
+    color: var(--gray-800);
+    margin-bottom: var(--space-4);
+    font-size: 1rem;
+    line-height: 1.5;
+}
 
-    .action-btn { background: #3498db; border: none; color: white; font-size: 1rem; padding: 10px 18px; border-radius: 8px; cursor: pointer; transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.1s ease-out; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .action-btn:disabled { background: #bdc3c7; color: #7f8c8d; cursor: default; box-shadow: none; opacity: 0.7; transform: none; }
-    .action-btn:hover:enabled { background: #2980b9; box-shadow: 0 4px 8px rgba(0,0,0,0.15); transform: translateY(-1px); }
-    .action-btn:active:enabled { transform: translateY(1px) scale(0.98); box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+.popup-close {
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    padding: var(--space-2) var(--space-8);
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all var(--transition);
+}
 
-    .question-box { transition: opacity 0.3s ease-in-out; min-height: 150px; /* Ensure space during transitions */ }
-    .question-box.loading { opacity: 0.5; }
-    .question-box h3 { margin-bottom: 18px; font-size: 1.2rem; color: #34495e; }
-    .option-btn { display: block; width: 100%; margin: 10px 0; padding: 14px; font-size: 1rem; background: #ecf0f1; border: 1px solid #dde1e2; border-radius: 8px; cursor: pointer; text-align: left; transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out, transform 0.1s ease-out, box-shadow 0.2s ease; }
-    .option-btn:hover:not(:disabled) { background: #d5dfe7; border-color: #c0c9d0; transform: translateX(3px); }
-    .option-btn:disabled { opacity: 0.9; cursor: default; } 
-    .option-btn.correct { background-color: #2ecc71 !important; color: white !important; border-color: #27ae60 !important; animation: pulseCorrect 0.5s ease; }
-    .option-btn.incorrect { background-color: #e74c3c !important; color: white !important; border-color: #c0392b !important; animation: pulseIncorrect 0.5s ease; }
-
-    .option-btn.user-selected { box-shadow: 0 0 0 3px #5dade2 inset; }
-    .option-btn.actual-correct { background-color: #d4efdf !important; color: #145a32 !important; border: 2px solid #27ae60 !important; }
-    .option-btn.actual-correct.user-selected { background-color: #2ecc71 !important; color: white !important; border-color: #27ae60 !important; box-shadow: none; } 
-    .option-btn.user-selected-incorrect { background-color: #fadbd8 !important; color: #78281f !important; border: 2px solid #c0392b !important; box-shadow: none; }
-
-
-    @keyframes pulseCorrect { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
-    @keyframes pulseIncorrect { 0% { transform: scale(1); } 50% { transform: scale(0.97); } 100% { transform: scale(1); } }
-
-    #score-box { text-align: center; font-size: 1.2rem; margin-top: 25px; opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
-    #score-box.visible { opacity: 1; transform: translateY(0); }
-    #score-box p { margin-bottom: 8px; } #score-box strong { color: #27ae60; }
-
-    .back-btn, .submit-btn, #newNextBtnQuiz, #previewAnswersBtn, #prevPreviewBtn, #nextPreviewBtn { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; width: auto; margin-top: 10px; font-size: 1rem; transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.1s ease-out; box-shadow: 0 2px 4px rgba(0,0,0,0.1); color: white; }
-    .back-btn { background: #95a5a6; }
-    .back-btn:hover:enabled { background: #7f8c8d; box-shadow: 0 4px 8px rgba(0,0,0,0.15); transform: translateY(-1px); }
-    .back-btn:active:enabled { transform: translateY(1px) scale(0.98); }
-    .submit-btn { background: #27ae60; }
-    .submit-btn:hover:enabled { background: #229954; box-shadow: 0 4px 8px rgba(0,0,0,0.15); transform: translateY(-1px); }
-    .submit-btn:active:enabled { transform: translateY(1px) scale(0.98); }
-    #newNextBtnQuiz { background-color: #e67e22; }
-    #newNextBtnQuiz:hover:not(:disabled) { background-color: #d35400; box-shadow: 0 4px 8px rgba(0,0,0,0.15); transform: translateY(-1px); }
-    #newNextBtnQuiz:disabled, #prevPreviewBtn:disabled, #nextPreviewBtn:disabled { background-color: #bdc3c7; opacity: 0.7; cursor: default; box-shadow: none; transform: none; }
-    #newNextBtnQuiz:active:enabled { transform: translateY(1px) scale(0.98); }
-    #previewAnswersBtn { background-color: #5dade2; } 
-    #previewAnswersBtn:hover { background-color: #3498db; }
-    #prevPreviewBtn, #nextPreviewBtn { background-color: #8e44ad; } 
-    #prevPreviewBtn:hover:not(:disabled), #nextPreviewBtn:hover:not(:disabled) { background-color: #732d91; }
-
-
-    #progress-container { width: 100%; background: #e0e0e0; height: 14px; border-radius: 7px; margin-bottom: 25px; overflow: hidden; }
-    #progress-bar { height: 100%; width: 0%; background: #3498db; transition: width 0.4s ease; }
-
-    .login-box input, #register-form input { width: 100%; padding: 14px; margin: 10px 0; font-size: 1rem; border-radius: 8px; border: 1px solid #ccc; transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out; }
-    .login-box input:focus, #register-form input:focus { border-color: #3498db; box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2); outline: none; }
-    .login-box .action-btn, #register-form .action-btn { width: 100%; padding: 14px; margin-top: 15px; }
-    #auth-toggle, #register-form p { text-align: center; margin-top: 20px; font-size: 0.9rem; }
-    #auth-toggle a, #register-form a { color: #3498db; text-decoration: none; font-weight: bold; }
-    #auth-toggle a:hover, #register-form a:hover { text-decoration: underline; }
-    #register-form { opacity: 0; max-height: 0; overflow: hidden; transition: opacity 0.4s ease-out, max-height 0.4s ease-out; }
-    #register-form.visible { opacity: 1; max-height: 500px; }
-    .login-fields-group { transition: opacity 0.3s ease-out, max-height 0.3s ease-out; opacity: 1; max-height: 500px; overflow: hidden; }
-    .login-fields-group.hidden { opacity: 0; max-height: 0; }
-
-    .leaderboard-box h2 { color: #2c3e50; padding-bottom: 10px; border-bottom: 2px solid #e67e22; }
-    .leaderboard-box table { width: 100%; border-collapse: collapse; margin-top: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .leaderboard-box th, .leaderboard-box td { border: 1px solid #e0e0e0; padding: 12px 15px; text-align: left; font-size: 0.95rem; vertical-align: middle; }
-    .leaderboard-box th { background-color: #3498db; color: white; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; }
-    .leaderboard-box tr { transition: background-color 0.2s ease; opacity: 0; transform: translateX(-20px); animation: slideInRow 0.4s forwards; }
-    .leaderboard-box tr:nth-child(even) { background-color: #f8f9fa; }
-    /* .leaderboard-box tr:hover { background-color: #e9ecef; } */ /* Handled by specific top rank hover */
-    .leaderboard-box td:first-child { font-weight: bold; text-align: center; width: 60px; color: #e67e22; font-size: 1.1rem; }
-    .leaderboard-box td:nth-child(3) { text-align: center; }
-    .leaderboard-box tr.current-user-leaderboard td { background-color: #dcf0ff !important; font-weight: bold; }
-    .leaderboard-box .button-container { margin-top: 25px; }
-    .leaderboard-placeholder td { text-align: center !important; color: #7f8c8d; font-style: italic; padding: 20px 0 !important; font-size: 1rem; animation: none !important; opacity: 1 !important; transform: translateX(0) !important; }
-    @keyframes slideInRow { to { opacity: 1; transform: translateX(0); } }
-
-    /* Leaderboard Rank Badges and Row Highlights */
-    .rank-badge {
-        margin-right: 10px;
-        font-size: 1.2em; /* Slightly larger */
-        vertical-align: middle;
-        animation: pulseBadge 2.5s infinite ease-in-out;
-        text-shadow: 0 0 3px rgba(0,0,0,0.2); /* Subtle shadow for depth */
-    }
-    .rank-1-badge { color: #FFD700; /* Gold */ }
-    .rank-2-badge { color: #C0C0C0; /* Silver */ animation-delay: -0.3s; } /* Offset animation */
-    .rank-3-badge { color: #CD7F32; /* Bronze */ animation-delay: -0.6s; } /* Offset animation */
-
-    @keyframes pulseBadge {
-        0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.8; }
-        50% { transform: scale(1.2) rotate(5deg); opacity: 1; }
-    }
-    
-    .leaderboard-box tr.top-rank-1 td { background-color: rgba(255, 215, 0, 0.08) !important; }
-    .leaderboard-box tr.top-rank-2 td { background-color: rgba(192, 192, 192, 0.08) !important; }
-    .leaderboard-box tr.top-rank-3 td { background-color: rgba(205, 127, 50, 0.08) !important; }
-
-    .leaderboard-box tr.top-rank-1:hover td,
-    .leaderboard-box tr.top-rank-2:hover td,
-    .leaderboard-box tr.top-rank-3:hover td {
-        background-color: rgba(0,0,0,0.05) !important; /* Darken highlight slightly on hover */
-    }
-    /* Ensure current user highlight overrides top rank if they are a top ranker */
-    .leaderboard-box tr.current-user-leaderboard.top-rank-1 td,
-    .leaderboard-box tr.current-user-leaderboard.top-rank-2 td,
-    .leaderboard-box tr.current-user-leaderboard.top-rank-3 td {
-        background-color: #cceaff !important; /* Slightly more vibrant blue for current user in top 3 */
-        font-weight: bold;
-    }
-    .leaderboard-box tr.current-user-leaderboard td { /* General current user highlight if not in top 3 */
-        background-color: #dcf0ff !important; 
-        font-weight: bold;
-    }
-
-
-    .profile-dashboard h2 { color: #2c3e50; padding-bottom: 10px; border-bottom: 2px solid #5dade2; }
-    .profile-info { background-color: #f8f9fa; padding: 25px; border-radius: 8px; margin-top: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    .profile-info p { font-size: 1.1rem; margin-bottom: 18px; color: #333; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #e0e0e0; padding-bottom: 18px; opacity: 0; transform: translateY(15px); animation: fadeInProfileItem 0.5s ease-out forwards; }
-    @keyframes fadeInProfileItem { to { opacity: 1; transform: translateY(0); } }
-    .profile-info p:last-child { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
-    .profile-info strong { color: #2c3e50; margin-right: 15px; flex-shrink: 0; font-weight: 600; }
-    .profile-info span { color: #3498db; font-weight: 500; text-align: right; word-break: break-all; }
-    .profile-dashboard .button-container { margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; }
-    .profile-dashboard .action-btn[onclick="logout()"] { background-color: #e74c3c; }
-    .profile-dashboard .action-btn[onclick="logout()"]:hover { background-color: #c0392b; }
-
-    .button-container { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-    .button-container button { width: 100%; }
-
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: none; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: opacity 0.3s ease; }
-    .modal-overlay.active { display: flex; opacity: 1; }
-    .modal { background: #ffffff; padding: 0; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); min-width: 320px; max-width: 90%; width: 480px; text-align: left; transform: scale(0.95) translateY(-10px); opacity: 0; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease; overflow: hidden; }
-    .modal-overlay.active .modal { transform: scale(1) translateY(0); opacity: 1; }
-    .modal-header { padding: 15px 20px; border-bottom: 1px solid #e9ecef; display: flex; justify-content: space-between; align-items: center; background-color: #f8f9fa; }
-    .modal-header h3 { margin: 0; font-size: 1.2rem; color: #343a40; }
-    .modal-close-btn { background: transparent; border: none; font-size: 1.75rem; font-weight: bold; color: #6c757d; cursor: pointer; line-height: 1; padding: 0 5px; transition: color 0.2s ease; }
-    .modal-close-btn:hover { color: #343a40; }
-    .modal.modal-info .modal-header { border-left: 5px solid #5dade2; }
-    .modal.modal-success .modal-header { border-left: 5px solid #2ecc71; }
-    .modal.modal-error .modal-header { border-left: 5px solid #e74c3c; }
-    .modal.modal-confirm .modal-header { border-left: 5px solid #e67e22; }
-    .modal-body { padding: 20px 25px; font-size: 1rem; color: #495057; line-height: 1.6; }
-    .modal-footer { padding: 15px 20px; border-top: 1px solid #e9ecef; display: flex; justify-content: flex-end; gap: 10px; background-color: #f8f9fa; }
-    .modal-action-btn { padding: 10px 20px; border: none; border-radius: 6px; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease; }
-    .modal-action-btn:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .modal-action-btn:active { transform: translateY(0px); }
-    #modal-ok-btn { background-color: #3498db; color: white; }
-    #modal-ok-btn:hover { background-color: #2980b9; }
-    #modal-confirm-btn { background-color: #27ae60; color: white; }
-    #modal-confirm-btn:hover { background-color: #229954; }
-    #modal-cancel-btn { background-color: #95a5a6; color: white; }
-    #modal-cancel-btn:hover { background-color: #7f8c8d; }
-
-
-    @media (min-width: 450px) { .button-container { flex-direction: row; justify-content: space-around; } .button-container button { width: auto; } } 
-    @media (max-width: 640px) { h2 { font-size: 1.3rem; } .leaderboard-box .leaderboard-subtitle {font-size: 0.9rem;} .app-header h1 { font-size: 1.4rem; } .header-icon { width: 40px; height: 40px; font-size: 1.2rem; } .app-header { padding: 10px 15px; } .content-wrapper { padding: 10px; } .view { padding: 15px; margin: 15px auto; width: calc(100% - 20px); left: 10px; } .quiz-item { font-size: 1rem; padding: 12px 15px; } .option-btn { padding: 12px; font-size: 0.95rem;} .back-btn, .submit-btn, #newNextBtnQuiz, #previewAnswersBtn, #prevPreviewBtn, #nextPreviewBtn { padding: 10px 15px; font-size: 0.95rem; } .leaderboard-box th, .leaderboard-box td { padding: 10px; font-size: 0.9rem;} .login-box input, #register-form input { padding: 12px; font-size: 0.95rem;} .login-box .action-btn, #register-form .action-btn { padding: 12px; } .profile-info p { font-size: 1rem; padding-bottom: 12px; margin-bottom: 12px;} .profile-info {padding: 20px;} .modal { width: 90%; } .button-container button { width: 100%; margin-bottom: 8px;} #category-grid-container {grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;} .category-card {padding: 20px 15px; min-height: 130px;} .category-card .card-icon {font-size: 2.5rem; width: 50px; height: 50px; margin-bottom: 10px;} .category-card .card-name {font-size: 1.1rem;} }
-    @media (min-width: 450px) and (max-width: 640px) { .button-container {flex-direction: row; justify-content: space-around;} .button-container button { width: auto; } }
-    @media (max-width: 380px) { .app-header h1 { font-size: 1.2rem; } .leaderboard-box .leaderboard-subtitle {font-size: 0.85rem; margin-top: -12px; margin-bottom: 15px;} .header-icon { width: 36px; height: 36px; font-size: 1.1rem; } .app-header { padding: 8px 10px; } .content-wrapper { padding: 10px; } .view { padding: 10px; width: calc(100% - 20px); left: 10px;} .quiz-item { font-size: 0.95rem; margin: 10px 0; } .quiz-header { margin-bottom: 10px; } #quiz-title { font-size: 1.2rem; } .question-box h3 { font-size: 1.1rem; margin-bottom: 12px; } #progress-container { margin-bottom: 20px; } .profile-info p { font-size: 0.95rem; padding-bottom: 10px; margin-bottom: 10px;} .profile-info {padding: 15px;} .modal-header h3 { font-size: 1.1rem;} .modal-body {padding: 15px 20px; font-size: 0.9rem;} .modal-footer { padding: 10px 15px;} .modal-action-btn {padding: 8px 15px; font-size: 0.9rem;} #category-grid-container {grid-template-columns: 1fr; gap: 10px;} .category-card {padding: 15px; min-height: 120px;} .category-card .card-icon {font-size: 2.2rem; width: 45px; height: 45px;} .category-card .card-name{font-size: 1rem;} .button-container {flex-direction: column;} .button-container button {width: 100%; margin-bottom: 8px;} }
-  </style>
+.popup-close:active {
+    transform: scale(0.95);
+}
+    </style>
 </head>
 <body>
-  <header class="app-header hidden-initial" id="app-header">
-    <div class="header-icon" id="leaderboard-icon-container" title="View Leaderboard">
-        <i class="fas fa-trophy"></i>
+    <div id="app" class="app-container">
+        <!-- Header -->
+        <header class="app-header hidden-initial" id="app-header">
+            <div class="header-icon" id="leaderboard-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <h1 class="app-title">Quiz Hub</h1>
+            <div class="header-icon" id="profile-icon">
+                <i class="fas fa-user"></i>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Auth View -->
+            <section id="auth-view" class="auth-container">
+                <h2 class="auth-title">Welcome Back</h2>
+                <form id="login-form" class="login-fields-group">
+                    <div class="input-group">
+                        <label class="input-label" for="email">Email Address</label>
+                        <input type="email" id="email" class="input-field" placeholder="Enter your email" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="password">Password</label>
+                        <input type="password" id="password" class="input-field" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="button button-primary">Login</button>
+                    <p class="mt-4 text-center">
+                        New user? <a href="#" id="show-register">Register here</a>
+                    </p>
+                </form>
+
+                <form id="register-form" class="hidden">
+                    <div class="input-group">
+                        <label class="input-label" for="reg-name">Full Name</label>
+                        <input type="text" id="reg-name" class="input-field" placeholder="Enter your name" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="reg-email">Email Address</label>
+                        <input type="email" id="reg-email" class="input-field" placeholder="Enter your email" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="reg-password">Password</label>
+                        <input type="password" id="reg-password" class="input-field" placeholder="Create a password" required>
+                    </div>
+                    <button type="submit" class="button button-primary">Register</button>
+                    <p class="mt-4 text-center">
+                        Already have an account? <a href="#" id="show-login">Login here</a>
+                    </p>
+                </form>
+            </section>
+
+            <!-- Categories View -->
+            <section id="categories-view" class="hidden">
+                <div class="category-grid" id="category-grid-container"></div>
+            </section>
+
+            <!-- Quiz List View -->
+            <section id="quiz-list-view" class="quiz-list hidden">
+                <button class="button button-secondary mb-4" id="back-to-categories">
+                    <i class="fas fa-arrow-left"></i> Back to Categories
+                </button>
+                <div id="quiz-items-container"></div>
+            </section>
+
+            <!-- Quiz Taking View -->
+            <section id="quiz-view" class="quiz-container hidden">
+                <div class="progress-bar-container">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+
+                <div class="question-box" id="question-box"></div>
+
+                <div class="button-container">
+                    <button id="next-btn" class="button button-primary" disabled>Next Question</button>
+                    <button id="submit-btn" class="button button-primary hidden">Submit Quiz</button>
+                    <button id="quit-btn" class="button button-secondary">Quit Quiz</button>
+                </div>
+            </section>
+
+            <!-- Score View -->
+            <section id="score-view" class="score-container hidden">
+                <h2 class="score-title">Quiz Complete!</h2>
+                <div class="score-details">
+                    <div class="score-item">
+                        <span class="score-label">Total Questions</span>
+                        <span class="score-value" id="total-questions">0</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-label">Correct Answers</span>
+                        <span class="score-value" id="correct-answers">0</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-label">Your Score</span>
+                        <span class="score-value" id="final-score">0%</span>
+                    </div>
+                </div>
+                <button class="button button-primary" id="try-again">Try Again</button>
+                <button class="button button-secondary" id="back-to-home">Back to Home</button>
+            </section>
+
+ <!-- Leaderboard View -->
+<section id="leaderboard-view" class="leaderboard-view hidden">
+    <div class="leaderboard-header">
+        <button class="back-button" id="leaderboard-back">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <h2 class="leaderboard-title">Leaderboard</h2>
+        <p class="leaderboard-subtitle">Top performers this month</p>
     </div>
-    <h1 id="main-app-title">The Quiz Hub</h1>
-    <div class="header-icon" id="profile-icon-container" title="My Profile">
-        <span id="profile-initial">U</span> </div>
-  </header>
-
-  <div class="content-wrapper">
-      <div class="login-box view" id="login-box">
-        <h2>Login</h2>
-        <div class="login-fields-group" id="login-fields-group">
-            <input type="email" id="email" placeholder="Email Address" autocomplete="email" />
-            <input type="password" id="password" placeholder="Password" autocomplete="current-password" />
-            <button onclick="login()" class="action-btn">Login</button>
-        </div>
-        <div id="auth-toggle">
-          <p id="toggle-text">New user? <a href="#" onclick="showRegisterForm()">Register here</a></p>
-        </div>
-        <div id="register-form">
-          <h2>Register</h2>
-          <input type="text" id="reg-name" placeholder="Full Name" autocomplete="name" />
-          <input type="email" id="reg-email" placeholder="Email Address" autocomplete="email" />
-          <input type="password" id="reg-password" placeholder="Create Password" autocomplete="new-password" />
-          <button onclick="register()" class="action-btn">Register</button>
-          <p>Already have an account? <a href="#" onclick="showLoginForm()">Login here</a></p>
-        </div>
-      </div>
-
-      <div class="quiz-list view hidden" id="quiz-list">
-        <h2 id="quiz-list-heading">Quiz Categories</h2>
-        <button class="back-btn" id="back-to-categories-btn" style="margin-bottom: 15px;" onclick="showCategoryView()">← Back to Categories</button>
-        <div id="category-grid-container"></div>
-        <div id="quiz-items-container" style="display: none;"></div>
-      </div>
-
-      <div class="quiz-box view hidden" id="quiz-box">
-        <div class="quiz-header">
-          <h2 id="quiz-title" style="flex-grow: 1; text-align: center;"></h2>
-        </div>
-        <p id="quiz-description" style="text-align: center; margin-bottom: 15px;"></p>
-        <div id="progress-container"><div id="progress-bar"></div></div>
-        <div id="score-box"></div> 
-        <div class="question-box" id="question-box"></div>
-        <div class="button-container" id="quiz-action-buttons">
-            <button class="action-btn" id="newNextBtnQuiz" style="display: none;">Next Question</button>
-            <button class="submit-btn" id="submitBtn" style="display: none;">Submit Quiz</button>
-            <button id="previewAnswersBtn" style="display: none;">Preview Answers</button>
-            <button id="prevPreviewBtn" style="display: none;">&laquo; Previous</button>
-            <button id="nextPreviewBtn" style="display: none;">Next &raquo;</button>
-            <button class="back-btn" id="backToQuizzesBtn" onclick="goBackToQuizList()">Back to Quizzes</button>
-        </div>
-      </div>
-
-      <div class="leaderboard-box view hidden" id="leaderboard-box">
-        <h2>Leaderboard</h2>
-        <p class="leaderboard-subtitle">Battle for the top spots and earn your badge!</p>
-        <table id="leaderboard-table">
-          <thead><tr><th>Rank</th><th>Name</th><th>Quizzes Played</th><th>Total Score</th></tr></thead>
-          <tbody></tbody>
-        </table>
-        <div class="button-container">
-            <button class="back-btn" onclick="goBackToQuizListFromLeaderboard()">Back to Quizzes</button>
-        </div>
-      </div>
-
-      <div class="profile-dashboard view hidden" id="profile-dashboard">
-        <h2>My Profile</h2>
-        <div class="profile-info">
-          <p style="animation-delay: 0s;"><strong>Name:</strong> <span id="profile-name">Loading...</span></p>
-          <p style="animation-delay: 0.1s;"><strong>Email:</strong> <span id="profile-email">Loading...</span></p>
-          <p style="animation-delay: 0.2s;"><strong>Total Quizzes Taken:</strong> <span id="profile-quizzes-taken">Loading...</span></p>
-          <p style="animation-delay: 0.3s;"><strong>Overall Score:</strong> <span id="profile-overall-score">Loading...</span></p>
-        </div>
-        <div class="button-container">
-          <button onclick="logout()" class="action-btn" style="background-color: #e74c3c;">Logout</button>
-          <button class="back-btn" onclick="goBackToQuizListFromProfile()">Back to Quizzes</button>
-        </div>
-      </div>
-  </div>
-
-  <div id="custom-modal-overlay" class="modal-overlay">
-    <div id="custom-modal" class="modal">
-      <div class="modal-header">
-        <h3 id="modal-title">Notification</h3>
-        <button id="modal-close-btn" class="modal-close-btn">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p id="modal-message"></p>
-      </div>
-      <div class="modal-footer" id="modal-footer">
-        <button id="modal-cancel-btn" class="modal-action-btn" style="display:none;">Cancel</button>
-        <button id="modal-ok-btn" class="modal-action-btn">OK</button>
-        <button id="modal-confirm-btn" class="modal-action-btn" style="display:none;">Confirm</button>
-      </div>
+    <div class="leaderboard-list" id="leaderboard-list">
+        <!-- Leaderboard items will be dynamically added here -->
     </div>
-  </div>
+</section>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
-    import {
-      getFirestore, collection, getDocs, doc, getDoc, addDoc, query, where, orderBy, limit, setDoc
-    } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js";
-    import {
-      getAuth, signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword, signOut
-    } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-auth.js";
+<!-- Profile View -->
+<section id="profile-view" class="profile-view hidden">
+    <div class="profile-header">
+        <button class="back-button" id="profile-back">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="profile-avatar" id="profile-avatar"></div>
+        <h2 class="profile-name" id="profile-name"></h2>
+        <p class="profile-email" id="profile-email"></p>
+    </div>
+    <div class="profile-stats">
+        <div class="stat-item">
+            <span class="stat-label">Quizzes Taken</span>
+            <span class="stat-value" id="profile-quizzes-taken">0</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Average Score</span>
+            <span class="stat-value" id="profile-avg-score">0%</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Best Score</span>
+            <span class="stat-value" id="profile-best-score">0%</span>
+        </div>
+    </div>
+    <div class="profile-actions">
+        <button class="button button-primary" id="logout-btn">
+            Logout
+        </button>
+    </div>
+</section>
+        </main>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDm788npk4qw9RcT7qevq2HPH5-DbSTq2k", // Replace with your actual API key
-      authDomain: "location-45133.firebaseapp.com",
-      projectId: "location-45133",
-      storageBucket: "location-45133.appspot.com",
-      messagingSenderId: "938504563570",
-      appId: "1:938504563570:web:a4741a9f52b9795f304beb"
+        <!-- Toast Message -->
+        <div id="toast" class="toast"></div>
+    </div>
+    <!-- Custom Popup -->
+<div id="custom-popup" class="custom-popup">
+    <div class="popup-content">
+        <div class="popup-icon">
+            <i class="fas"></i>
+        </div>
+        <div class="popup-message"></div>
+        <button class="popup-close">OK</button>
+    </div>
+</div>
+
+    <script type="module">
+// Firebase Imports
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, getDoc, addDoc, query, where, orderBy, limit, setDoc } 
+    from "https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword, signOut } 
+    from "https://www.gstatic.com/firebasejs/11.7.1/firebase-auth.js";
+
+// Firebase Configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyDm788npk4qw9RcT7qevq2HPH5-DbSTq2k",
+    authDomain: "location-45133.firebaseapp.com",
+    projectId: "location-45133",
+    storageBucket: "location-45133.appspot.com",
+    messagingSenderId: "938504563570",
+    appId: "1:938504563570:web:a4741a9f52b9795f304beb"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// App State
+let currentUser = null;
+let currentUserName = "User";
+let currentQuizData = null;
+let currentQuestionIndex = 0;
+let userAnswers = [];
+let quizScore = 0;
+
+// DOM Elements
+const appHeader = document.getElementById('app-header');
+const authView = document.getElementById('auth-view');
+const categoriesView = document.getElementById('categories-view');
+const quizListView = document.getElementById('quiz-list-view');
+const quizView = document.getElementById('quiz-view');
+const scoreView = document.getElementById('score-view');
+const leaderboardView = document.getElementById('leaderboard-view');
+const profileView = document.getElementById('profile-view');
+
+// View Management
+function showView(viewToShow) {
+    [authView, categoriesView, quizListView, quizView, scoreView, leaderboardView, profileView]
+        .forEach(view => view.classList.add('hidden'));
+    viewToShow.classList.remove('hidden');
+}
+
+// Popup handling
+function showPopup(message, type = 'info') {
+    const popup = document.getElementById('custom-popup');
+    const icon = popup.querySelector('.fas');
+    const messageEl = popup.querySelector('.popup-message');
+    
+    // Set icon based on type
+    icon.className = 'fas';
+    switch (type) {
+        case 'success':
+            icon.classList.add('fa-check-circle');
+            break;
+        case 'error':
+            icon.classList.add('fa-exclamation-circle');
+            break;
+        default:
+            icon.classList.add('fa-info-circle');
+    }
+    
+    messageEl.textContent = message;
+    popup.classList.add('show');
+    
+    // Add click event to close button
+    const closeBtn = popup.querySelector('.popup-close');
+    const closePopup = () => {
+        popup.classList.remove('show');
+        closeBtn.removeEventListener('click', closePopup);
     };
+    closeBtn.addEventListener('click', closePopup);
+}
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+// Error message mapping
+const errorMessages = {
+    'auth/invalid-email': 'Please enter a valid email address.',
+    'auth/user-disabled': 'This account has been disabled.',
+    'auth/user-not-found': 'Invalid email or password.',
+    'auth/wrong-password': 'Invalid email or password.',
+    'auth/email-already-in-use': 'This email is already registered.',
+    'auth/operation-not-allowed': 'Unable to create account.',
+    'auth/weak-password': 'Password should be at least 6 characters.',
+    'auth/network-request-failed': 'Please check your internet connection.',
+    'auth/too-many-requests': 'Too many attempts. Please try again later.',
+    'auth/invalid-login-credentials': 'Invalid email or password.'
+};
 
-    let currentUser = null;
-    let currentUserName = "User";
-    let activeView = null;
-
-    const appHeaderElement = document.getElementById("app-header");
-    const leaderboardIconContainer = document.getElementById("leaderboard-icon-container");
-    const profileIconContainer = document.getElementById("profile-icon-container");
-    const profileInitialSpan = document.getElementById("profile-initial");
-    const loginBox = document.getElementById("login-box");
-    const quizListBox = document.getElementById("quiz-list");
-    const quizListHeading = document.getElementById("quiz-list-heading");
-    const categoryGridContainer = document.getElementById("category-grid-container");
-    const backToCategoriesBtn = document.getElementById("back-to-categories-btn");
-    const quizItemsContainer = document.getElementById("quiz-items-container");
-    const quizBoxElement = document.getElementById("quiz-box"); 
-    const leaderboardBox = document.getElementById("leaderboard-box");
-    const profileDashboardBox = document.getElementById("profile-dashboard");
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
-    const regNameInput = document.getElementById("reg-name");
-    const regEmailInput = document.getElementById("reg-email");
-    const regPasswordInput = document.getElementById("reg-password");
-    const loginFieldsGroup = document.getElementById("login-fields-group");
-    const registerFormElement = document.getElementById("register-form");
-
-    const quizTitleElement = document.getElementById("quiz-title");
-    const quizDescriptionElement = document.getElementById("quiz-description");
-    const progressBarContainer = document.getElementById("progress-container"); 
-    const progressBarElement = document.getElementById("progress-bar");
-    const questionBoxDiv = document.getElementById("question-box");
-    const scoreBoxDiv = document.getElementById("score-box");
-    const newNextBtnQuiz = document.getElementById("newNextBtnQuiz");
-    const submitBtn = document.getElementById("submitBtn");
-    const previewAnswersBtn = document.getElementById("previewAnswersBtn");
-    const prevPreviewBtn = document.getElementById("prevPreviewBtn");
-    const nextPreviewBtn = document.getElementById("nextPreviewBtn");
-    const backToQuizzesBtnFromQuiz = document.getElementById("backToQuizzesBtn");
-
-    const profileNameSpan = document.getElementById("profile-name");
-    const profileEmailSpan = document.getElementById("profile-email");
-    const profileQuizzesTakenSpan = document.getElementById("profile-quizzes-taken");
-    const profileOverallScoreSpan = document.getElementById("profile-overall-score");
-    const modalOverlay = document.getElementById('custom-modal-overlay');
-    const modalElement = document.getElementById('custom-modal');
-    const modalTitleElement = document.getElementById('modal-title');
-    const modalMessageElement = document.getElementById('modal-message');
-    const modalCloseBtn = document.getElementById('modal-close-btn');
-    const modalOkBtn = document.getElementById('modal-ok-btn');
-    const modalConfirmBtn = document.getElementById('modal-confirm-btn');
-    const modalCancelBtn = document.getElementById('modal-cancel-btn');
-    let modalOnOkCallback = null; let modalOnConfirmCallback = null; let modalOnCancelCallback = null;
-
-    let currentQuizData = null; let currentQuestionIndex = 0; let currentScore = 0;
-    let questionsAttempted = 0; let answersGiven = []; let selectedOptionsMap = []; let quizIdForDb = null;
-    let isPreviewMode = false; let currentPreviewQuestionIndex = 0;
-
-
-    function closeModal() { modalOverlay.classList.remove('active'); modalElement.classList.remove('modal-info', 'modal-success', 'modal-error', 'modal-confirm'); setTimeout(() => { if (!modalOverlay.classList.contains('active')) { modalOnOkCallback = null; modalOnConfirmCallback = null; modalOnCancelCallback = null; }}, 300); }
-    function showCustomModal(message, title = 'Notification', type = 'info', onOk = null, onConfirm = null, onCancel = null) { modalMessageElement.innerHTML = message; modalTitleElement.textContent = title; modalElement.classList.remove('modal-info', 'modal-success', 'modal-error', 'modal-confirm'); modalElement.classList.add(`modal-${type}`); modalOkBtn.style.display = 'none'; modalConfirmBtn.style.display = 'none'; modalCancelBtn.style.display = 'none'; modalOnOkCallback = onOk; modalOnConfirmCallback = onConfirm; modalOnCancelCallback = onCancel; if (type === 'confirm') { modalConfirmBtn.style.display = 'inline-block'; modalCancelBtn.style.display = 'inline-block'; } else { modalOkBtn.style.display = 'inline-block'; } modalOverlay.classList.add('active'); }
-    modalCloseBtn.onclick = closeModal; modalOverlay.onclick = (event) => { if (event.target === modalOverlay) closeModal(); }; modalOkBtn.onclick = () => { closeModal(); if (modalOnOkCallback) modalOnOkCallback(); }; modalConfirmBtn.onclick = () => { closeModal(); if (modalOnConfirmCallback) modalOnConfirmCallback(); }; modalCancelBtn.onclick = () => { closeModal(); if (modalOnCancelCallback) modalOnCancelCallback(); };
-
-    leaderboardIconContainer.onclick = () => showLeaderboardView();
-    profileIconContainer.onclick = () => showProfileDashboardView();
-    backToCategoriesBtn.onclick = () => showCategoryView();
-
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
+// Auth Event Listener
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
         currentUser = user;
         try {
-          const userDocRef = doc(db, "users", currentUser.uid);
-          const userDocSnap = await getDoc(userDocRef);
-          currentUserName = userDocSnap.exists() ? userDocSnap.data().name : (currentUser.email ? currentUser.email.split('@')[0] : "User");
-        } catch (e) {
-          currentUserName = currentUser.email ? currentUser.email.split('@')[0] : "User";
-          console.error("Error fetching user name:", e);
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (userDoc.exists()) {
+                currentUserName = userDoc.data().name;
+            }
+            showView(categoriesView);
+            loadCategories();
+        } catch (error) {
+            showPopup('Unable to load user data', 'error');
         }
-        profileInitialSpan.textContent = currentUserName.charAt(0).toUpperCase() || 'U';
-        appHeaderElement.classList.remove("hidden-initial");
-        showQuizListView();
-      } else {
-        currentUser = null; currentUserName = "User";
-        profileInitialSpan.textContent = 'U';
-        appHeaderElement.classList.add("hidden-initial");
-        showLoginView();
-      }
+    } else {
+        currentUser = null;
+        showView(authView);
+    }
+    appHeader.classList.toggle('hidden-initial', !user);
+});
+
+// Authentication Functions
+async function login(email, password) {
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+        showPopup('Login successful!', 'success');
+    } catch (error) {
+        const message = errorMessages[error.code] || 'Unable to login. Please try again.';
+        showPopup(message, 'error');
+    }
+}
+
+async function register(name, email, password) {
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await setDoc(doc(db, "users", userCredential.user.uid), {
+            name: name,
+            email: email,
+            createdAt: new Date().toISOString()
+        });
+        showPopup('Registration successful!', 'success');
+    } catch (error) {
+        const message = errorMessages[error.code] || 'Unable to register. Please try again.';
+        showPopup(message, 'error');
+    }
+}
+
+async function logout() {
+    try {
+        await signOut(auth);
+        currentUser = null;
+        currentUserName = "User";
+        showPopup('Logged out successfully', 'success');
+        showView(authView);
+        appHeader.classList.add('hidden-initial');
+    } catch (error) {
+        showPopup('Unable to logout. Please try again.', 'error');
+    }
+}
+
+// Categories Functions
+async function loadCategories() {
+    const categoryGrid = document.getElementById('category-grid-container');
+    categoryGrid.innerHTML = '<div class="loading-spinner"></div>';
+    
+    try {
+        const categoriesSnapshot = await getDocs(collection(db, "categories"));
+        const quizzesSnapshot = await getDocs(collection(db, "quizzes"));
+        
+        const quizCounts = {};
+        quizzesSnapshot.forEach(doc => {
+            const category = doc.data().category;
+            quizCounts[category] = (quizCounts[category] || 0) + 1;
+        });
+        
+        categoryGrid.innerHTML = '';
+        categoriesSnapshot.forEach(doc => {
+            const data = doc.data();
+            data.quizCount = quizCounts[data.name] || 0;
+            createCategoryCard(data, doc.id);
+        });
+    } catch (error) {
+        showPopup('Unable to load categories', 'error');
+        categoryGrid.innerHTML = '<p>Unable to load categories</p>';
+    }
+}
+
+function createCategoryCard(category, id) {
+    const card = document.createElement('div');
+    card.className = 'category-card';
+    card.innerHTML = `
+        <div class="category-icon">
+            <i class="${category.icon || 'fas fa-book'}"></i>
+        </div>
+        <h3 class="category-name">${category.name}</h3>
+        <span class="category-count">${category.quizCount} Quiz${category.quizCount !== 1 ? 'zes' : ''}</span>
+    `;
+    card.addEventListener('click', () => loadQuizzes(category.name));
+    document.getElementById('category-grid-container').appendChild(card);
+}
+
+// Quiz List Functions
+async function loadQuizzes(categoryName) {
+    showView(quizListView);
+    const quizContainer = document.getElementById('quiz-items-container');
+    quizContainer.innerHTML = '<div class="loading-spinner"></div>';
+    
+    try {
+        const quizQuery = query(
+            collection(db, "quizzes"),
+            where("category", "==", categoryName)
+        );
+        const quizzesSnapshot = await getDocs(quizQuery);
+        quizContainer.innerHTML = '';
+        
+        quizzesSnapshot.forEach(doc => {
+            const data = doc.data();
+            data.id = doc.id;
+            createQuizItem(data, doc.id);
+        });
+    } catch (error) {
+        showPopup('Unable to load quizzes', 'error');
+        quizContainer.innerHTML = '<p>Unable to load quizzes</p>';
+    }
+}
+
+function createQuizItem(quiz, id) {
+    const quizElement = document.createElement('div');
+    quizElement.className = 'quiz-item';
+    quizElement.innerHTML = `
+        <h3 class="quiz-title">${quiz.title}</h3>
+        <p class="quiz-description">${quiz.description || 'No description available'}</p>
+    `;
+    quizElement.addEventListener('click', () => startQuiz(id, quiz));
+    document.getElementById('quiz-items-container').appendChild(quizElement);
+}
+
+// Quiz Taking Functions
+function startQuiz(id, quiz) {
+    currentQuizData = quiz;
+    currentQuizData.id = id;
+    currentQuestionIndex = 0;
+    userAnswers = new Array(quiz.questions.length).fill(null);
+    quizScore = 0;
+    showView(quizView);
+    displayQuestion();
+}
+
+function displayQuestion() {
+    const question = currentQuizData.questions[currentQuestionIndex];
+    const questionBox = document.getElementById('question-box');
+    const nextBtn = document.getElementById('next-btn');
+    const submitBtn = document.getElementById('submit-btn');
+    
+    nextBtn.disabled = true;
+    
+    // Show submit button on last question
+    nextBtn.style.display = currentQuestionIndex === currentQuizData.questions.length - 1 ? 'none' : 'block';
+    submitBtn.style.display = currentQuestionIndex === currentQuizData.questions.length - 1 ? 'block' : 'none';
+    
+    questionBox.innerHTML = `
+        <h3 class="question-text">Question ${currentQuestionIndex + 1} of ${currentQuizData.questions.length}</h3>
+        <p class="question-text">${question.question}</p>
+        <div class="options-container">
+            ${question.options.map((option, index) => `
+                <button class="option-button" data-index="${index}">${option}</button>
+            `).join('')}
+        </div>
+    `;
+
+    // Update progress bar
+    const progress = ((currentQuestionIndex + 1) / currentQuizData.questions.length) * 100;
+    document.getElementById('progress-bar').style.width = `${progress}%`;
+
+    // Add click listeners to options
+    questionBox.querySelectorAll('.option-button').forEach(button => {
+        button.addEventListener('click', () => selectAnswer(button.dataset.index));
     });
+}
+
+function selectAnswer(index) {
+    const question = currentQuizData.questions[currentQuestionIndex];
+    const correct = question.options[index] === question.answer;
+    userAnswers[currentQuestionIndex] = index;
     
-    function showView(viewToShow) {
-        const allViews = [loginBox, quizListBox, quizBoxElement, leaderboardBox, profileDashboardBox];
-        
-        if (activeView && activeView !== viewToShow) {
-            activeView.classList.add('hidden');
-            setTimeout(() => {
-                if (activeView && activeView.classList.contains('hidden')) { 
-                    activeView.style.display = 'none';
-                }
-            }, 400); 
-        }
-
-        viewToShow.style.display = 'block'; 
-        void viewToShow.offsetHeight; 
-        viewToShow.classList.remove('hidden');
-        activeView = viewToShow;
-
-        if (viewToShow !== loginBox && auth.currentUser) {
-            appHeaderElement.classList.remove("hidden-initial");
-        } else if (viewToShow === loginBox) {
-            appHeaderElement.classList.add("hidden-initial");
-        }
-    }
-
-    function showLoginView() { showView(loginBox); showLoginForm(); }
-    function showQuizListView() { resetQuizState(); showView(quizListBox); showCategoryView(); }
-    function showQuizTakingView() { showView(quizBoxElement); }
-    function showLeaderboardView() { resetQuizState(); showView(leaderboardBox); loadLeaderboard(); }
-    function showProfileDashboardView() { resetQuizState(); showView(profileDashboardBox); loadProfile(); }
-
-    async function loadCategories() { categoryGridContainer.innerHTML = '<p class="leaderboard-placeholder" style="grid-column: 1 / -1;">Loading categories...</p>'; quizItemsContainer.style.display = 'none'; quizItemsContainer.innerHTML = ''; categoryGridContainer.style.display = 'grid'; backToCategoriesBtn.style.display = 'none'; backToCategoriesBtn.classList.remove('visible'); quizListHeading.textContent = 'Quiz Categories'; try { const categoriesQuery = query(collection(db, "categories"), orderBy("order", "asc")); const categoriesSnapshot = await getDocs(categoriesQuery); categoryGridContainer.innerHTML = ''; addCategoryCard({ name: "All Quizzes", special: "all", iconClass: "fas fa-layer-group" }); if (categoriesSnapshot.empty) { console.log("No custom categories found in Firestore."); } else { categoriesSnapshot.forEach(docSnap => { addCategoryCard(docSnap.data(), docSnap.id); }); } const cards = categoryGridContainer.querySelectorAll('.category-card'); cards.forEach((card, index) => { setTimeout(() => card.classList.add('visible'), index * 100); }); } catch (error) { console.error("Error loading categories: ", error); showCustomModal("Could not load quiz categories.", "Loading Error", "error"); categoryGridContainer.innerHTML = '<p class="leaderboard-placeholder" style="grid-column: 1 / -1; color:red;">Failed to load categories.</p>'; if (!categoryGridContainer.querySelector('.category-card[data-name="All Quizzes"]')) { addCategoryCard({ name: "All Quizzes", special: "all", iconClass: "fas fa-layer-group" }); setTimeout(() => categoryGridContainer.querySelector('.category-card').classList.add('visible'), 0); } } }
-    function addCategoryCard(categoryData, categoryId = null) { const card = document.createElement('div'); card.className = 'category-card'; if(categoryData.name) card.dataset.name = categoryData.name; if (categoryData.color) card.style.backgroundColor = categoryData.color; const iconContainer = document.createElement('div'); iconContainer.className = 'card-icon'; if (categoryData.iconClass) { const i = document.createElement('i'); i.className = categoryData.iconClass; iconContainer.appendChild(i); } else if (categoryData.imageUrl) { const img = document.createElement('img'); img.src = categoryData.imageUrl; img.alt = categoryData.name || 'Category Image'; iconContainer.appendChild(img); } else { const span = document.createElement('span'); span.textContent = categoryData.name ? categoryData.name.charAt(0).toUpperCase() : 'Q'; iconContainer.appendChild(span); } const nameSpan = document.createElement('span'); nameSpan.className = 'card-name'; nameSpan.textContent = categoryData.name || 'Unnamed Category'; card.appendChild(iconContainer); card.appendChild(nameSpan); if (typeof categoryData.quizCount === 'number') { const countSpan = document.createElement('span'); countSpan.className = 'card-quiz-count'; countSpan.textContent = `${categoryData.quizCount} Quizzes`; card.appendChild(countSpan); } card.onclick = () => showQuizzesForCategory(categoryData.special === "all" ? "all" : categoryData.name); categoryGridContainer.appendChild(card); }
-    async function showQuizzesForCategory(categoryName) { quizItemsContainer.innerHTML = '<p class="leaderboard-placeholder">Loading quizzes...</p>'; quizItemsContainer.style.display = 'block'; categoryGridContainer.style.display = 'none'; backToCategoriesBtn.style.display = 'inline-block'; setTimeout(() => backToCategoriesBtn.classList.add('visible'), 50); quizListHeading.textContent = categoryName === 'all' ? 'All Quizzes' : `Quizzes in ${categoryName}`; try { let quizzesQuery; if (categoryName === 'all') { quizzesQuery = collection(db, "quizzes"); } else { quizzesQuery = query(collection(db, "quizzes"), where("category", "==", categoryName)); } const querySnapshot = await getDocs(quizzesQuery); quizItemsContainer.innerHTML = ''; if (querySnapshot.empty) { quizItemsContainer.innerHTML = `<p class="leaderboard-placeholder">No quizzes found in "${categoryName}".</p>`; return; } querySnapshot.forEach((docSnap, index) => { const data = docSnap.data(); const div = document.createElement("div"); div.className = "quiz-item"; div.innerHTML = `<strong>${data.title}</strong><small>${data.description || 'No description'}</small>`; div.onclick = () => startQuiz(docSnap.id, data); quizItemsContainer.appendChild(div); setTimeout(() => div.classList.add('visible'), index * 100); }); } catch (error) { console.error(`Error loading quizzes for category ${categoryName}: `, error); showCustomModal(`Could not load quizzes for ${categoryName}.`, "Loading Error", "error"); quizItemsContainer.innerHTML = `<p class="leaderboard-placeholder" style="color:red;">Failed to load quizzes for "${categoryName}".</p>`; } }
-    window.showCategoryView = function() { quizListHeading.textContent = 'Quiz Categories'; quizItemsContainer.style.display = 'none'; quizItemsContainer.innerHTML = ''; backToCategoriesBtn.style.display = 'none'; backToCategoriesBtn.classList.remove('visible'); categoryGridContainer.style.display = 'grid'; loadCategories(); }
-    window.login = function () { const e=emailInput.value,p=passwordInput.value; if(!e||!p){showCustomModal("Please enter both email and password.","Login Error","error");return;} const lB=document.querySelector("#login-box button[onclick='login()']");lB.disabled=true;lB.textContent="Logging in...";signInWithEmailAndPassword(auth,e,p).catch(er=>{showCustomModal("Login failed: "+er.message,"Login Error","error");}).finally(()=>{if(!auth.currentUser){lB.disabled=false;lB.textContent="Login";}});};
-    window.register = async function () { const nR=regNameInput.value.trim(),eR=regEmailInput.value.trim(),pR=regPasswordInput.value; const rB=document.querySelector("#register-form button[onclick='register()']"); if(!nR||!eR||!pR){showCustomModal("Please fill all registration fields.","Reg Error","error");return;}if(pR.length<6){showCustomModal("Password should be at least 6 characters.","Reg Error","error");return;}rB.disabled=true;rB.textContent="Registering...";try{const uC=await createUserWithEmailAndPassword(auth,eR,pR);await setDoc(doc(db,"users",uC.user.uid),{name:nR,email:eR,uid:uC.user.uid});showCustomModal("Registration successful! Please login.","Success","success",showLoginForm);}catch(er){showCustomModal("Registration failed: "+er.message,"Reg Error","error");}finally{rB.disabled=false;rB.textContent="Register";}};
-    window.logout = function() { signOut(auth).catch(e => showCustomModal("Logout failed: " + e.message, "Logout Error", "error")); };
-    window.showRegisterForm = function () { document.querySelector("#login-box > h2").style.display="none"; loginFieldsGroup.classList.add('hidden'); document.getElementById("auth-toggle").style.display="none"; registerFormElement.style.display = "block"; void registerFormElement.offsetHeight; registerFormElement.classList.add("visible"); const regFormH2 = document.querySelector("#register-form > h2"); if(regFormH2) regFormH2.style.display="block"; };
-    window.showLoginForm = function () { document.querySelector("#login-box > h2").style.display="block"; registerFormElement.classList.remove("visible"); setTimeout(() => { registerFormElement.style.display = "none"; loginFieldsGroup.classList.remove('hidden'); const lB=document.querySelector("#login-box button[onclick='login()']"); lB.disabled=false;lB.textContent="Login"; document.getElementById("auth-toggle").style.display="block"; const regFormH2 = document.querySelector("#register-form > h2"); if(regFormH2) regFormH2.style.display="none"; regNameInput.value="";regEmailInput.value="";regPasswordInput.value=""; }, 400); };
-
-    function resetQuizState() {
-        isPreviewMode = false;
-        currentQuizData = null;
-        quizTitleElement.textContent = "";
-        quizDescriptionElement.style.display = "block";
-        progressBarContainer.style.display = "block";
-        scoreBoxDiv.innerHTML = "";
-        scoreBoxDiv.classList.remove('visible');
-        questionBoxDiv.innerHTML = "";
-        
-        newNextBtnQuiz.style.display = 'none';
-        submitBtn.style.display = 'none';
-        previewAnswersBtn.style.display = 'none';
-        prevPreviewBtn.style.display = 'none';
-        nextPreviewBtn.style.display = 'none';
-        backToQuizzesBtnFromQuiz.style.display = 'block'; 
-        backToQuizzesBtnFromQuiz.textContent = "Back to Quizzes";
-    }
-
-    async function startQuiz(id, quizData) { 
-        resetQuizState(); 
-        quizIdForDb=id;
-        if(quizData){currentQuizData=quizData;}
-        else{
-            const dS=await getDoc(doc(db,"quizzes",id));
-            if(!dS.exists()){showCustomModal("Quiz not found!","Error","error",showQuizListView);return;}
-            currentQuizData=dS.data();
-        }
-        currentQuestionIndex=0;currentScore=0;questionsAttempted=0;
-        answersGiven=Array(currentQuizData.questions.length).fill(false);
-        selectedOptionsMap=Array(currentQuizData.questions.length).fill(null);
-        
-        showQuizTakingView();
-        quizTitleElement.textContent=currentQuizData.title;
-        quizDescriptionElement.textContent=currentQuizData.description||"";
-        quizDescriptionElement.style.display=currentQuizData.description?"block":"none";
-        progressBarContainer.style.display="block";
-        scoreBoxDiv.classList.remove('visible'); 
-        scoreBoxDiv.innerHTML = ""; 
-        newNextBtnQuiz.style.display='block';
-        newNextBtnQuiz.disabled=true;
-        submitBtn.style.display="none";
-        previewAnswersBtn.style.display = 'none';
-        prevPreviewBtn.style.display = 'none';
-        nextPreviewBtn.style.display = 'none';
-        backToQuizzesBtnFromQuiz.style.display="block";
-        questionBoxDiv.innerHTML="";
-        questionBoxDiv.style.opacity = 1; 
-        updateProgressBar();
-        renderQuestion();
-    }
+    if (correct) quizScore++;
     
-    function renderQuestion() { questionBoxDiv.style.opacity = 0; questionBoxDiv.classList.add('loading'); setTimeout(() => { if(!currentQuizData||!currentQuizData.questions||currentQuestionIndex>=currentQuizData.questions.length){if(currentQuizData&&currentQuizData.questions&&answersGiven.every(a=>a))finalizeQuiz();return;} const q=currentQuizData.questions[currentQuestionIndex]; questionBoxDiv.innerHTML=`<h3>Q${currentQuestionIndex+1}: ${q.question}</h3>`; q.options.forEach((oT, index)=>{ const b=document.createElement("button"); b.className="option-btn"; b.textContent=oT; b.style.opacity = 0; b.style.transform = 'translateY(10px)'; b.style.transition = `opacity 0.3s ease ${index * 0.05}s, transform 0.3s ease ${index * 0.05}s`; if(answersGiven[currentQuestionIndex]){ b.disabled=true; if(oT===selectedOptionsMap[currentQuestionIndex])b.classList.add(oT===q.answer?'correct':'incorrect'); else if(oT===q.answer)b.classList.add('correct'); }else{ b.onclick=()=>handleAnswerSelection(b,oT,q.answer); } questionBoxDiv.appendChild(b); setTimeout(() => { b.style.opacity = 1; b.style.transform = 'translateY(0)'; }, 50); }); newNextBtnQuiz.style.display='block'; newNextBtnQuiz.disabled=true; submitBtn.style.display='none'; previewAnswersBtn.style.display = 'none'; prevPreviewBtn.style.display = 'none'; nextPreviewBtn.style.display = 'none'; if(answersGiven[currentQuestionIndex]){newNextBtnQuiz.disabled=false;} if(currentQuestionIndex===currentQuizData.questions.length-1){newNextBtnQuiz.style.display='none';if(answersGiven[currentQuestionIndex]){submitBtn.style.display='block';}} if(answersGiven.every(a=>a===true)){submitBtn.style.display='block';newNextBtnQuiz.style.display='none';} updateProgressBar(); questionBoxDiv.style.opacity = 1; questionBoxDiv.classList.remove('loading'); }, 300); }
-    function updateProgressBar() { const ansC=answersGiven.filter(a=>a).length; const totQ=currentQuizData?currentQuizData.questions.length:0; const pc=totQ>0?(ansC/totQ)*100:0; progressBarElement.style.width=pc+"%";}
-    window.handleAnswerSelection = function (btn, selected, correct) { if(answersGiven[currentQuestionIndex])return;const aOB=questionBoxDiv.querySelectorAll(".option-btn");aOB.forEach(b=>{b.disabled=true;if(b.textContent===correct)b.classList.add('correct'); else if (b !== btn) b.style.opacity = 0.6; });if(selected===correct){btn.classList.add('correct');currentScore++;}else{btn.classList.add('incorrect');}answersGiven[currentQuestionIndex]=true;selectedOptionsMap[currentQuestionIndex]=selected;questionsAttempted++;updateProgressBar();newNextBtnQuiz.disabled=true;newNextBtnQuiz.style.display='block';submitBtn.style.display='none';if(currentQuestionIndex<currentQuizData.questions.length-1){newNextBtnQuiz.disabled=false;}else{newNextBtnQuiz.style.display='none';submitBtn.style.display='block';}if(answersGiven.every(a=>a===true)){submitBtn.style.display='block';newNextBtnQuiz.style.display='none';}};
-    newNextBtnQuiz.onclick = () => { if (!newNextBtnQuiz.disabled && currentQuestionIndex < currentQuizData.questions.length - 1) { currentQuestionIndex++; renderQuestion(); }};
-    submitBtn.onclick = async () => { if(!answersGiven.every(a=>a===true)){showCustomModal("You have unanswered questions. Submit anyway?","Confirm Submission","confirm",()=>{finalizeQuiz();},()=>{});}else{finalizeQuiz();}};
+    const buttons = document.querySelectorAll('.option-button');
+    buttons.forEach(button => {
+        button.disabled = true;
+        if (button.dataset.index === index) {
+            button.classList.add(correct ? 'correct' : 'incorrect');
+        }
+        if (question.options[button.dataset.index] === question.answer) {
+            button.classList.add('correct');
+        }
+    });
+
+    // If it's the last question, automatically show results after a delay
+    if (currentQuestionIndex === currentQuizData.questions.length - 1) {
+        setTimeout(showQuizResults, 1000);
+    } else {
+        // Enable next button after answering
+        const nextBtn = document.getElementById('next-btn');
+        nextBtn.disabled = false;
+        nextBtn.focus();
+    }
+}
+
+function showQuizResults() {
+    showView(scoreView);
+    const percentage = (quizScore / currentQuizData.questions.length) * 100;
     
-    async function finalizeQuiz() { 
-        questionBoxDiv.style.opacity = 0; 
-        setTimeout(async () => {
-            questionBoxDiv.innerHTML=``; 
-            questionBoxDiv.style.opacity = 1; 
-            
-            submitBtn.style.display="none";
-            newNextBtnQuiz.style.display="none";
-            previewAnswersBtn.style.display = 'block'; 
-            backToQuizzesBtnFromQuiz.style.display = 'block';
+    document.getElementById('total-questions').textContent = currentQuizData.questions.length;
+    document.getElementById('correct-answers').textContent = quizScore;
+    document.getElementById('final-score').textContent = `${percentage.toFixed(1)}%`;
+    
+    if (currentUser) {
+        saveQuizResult(percentage);
+    }
+}
 
-            quizDescriptionElement.style.display="none";
-            progressBarContainer.style.display="none";
-            
-            scoreBoxDiv.innerHTML=`<p>Total Questions: <strong>${currentQuizData.questions.length}</strong></p><p>Attempted: <strong>${questionsAttempted}</strong></p><p>Correct Answers: <strong>${currentScore}</strong></p><p>Your Score: <strong>${((currentScore/currentQuizData.questions.length)*100).toFixed(1)}%</strong></p>`;
-            scoreBoxDiv.classList.add('visible'); 
-            
-            quizTitleElement.textContent = "Quiz Completed!";
+async function saveQuizResult(score) {
+    try {
+        await addDoc(collection(db, "results"), {
+            userId: currentUser.uid,
+            userName: currentUserName,
+            quizId: currentQuizData.id,
+            quizTitle: currentQuizData.title,
+            score: score,
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        showPopup('Unable to save results', 'error');
+    }
+}
 
-            if(currentUser && !isPreviewMode){ 
-                try{
-                    await addDoc(collection(db,"results"),{userId:currentUser.uid,userName:currentUserName,quizTitle:currentQuizData.title,quizId:quizIdForDb,score:currentScore,totalQuestions:currentQuizData.questions.length,attempted:questionsAttempted,timestamp:new Date()});
-                }catch(e){
-                    console.error("Error saving results:",e);showCustomModal("Could not save quiz results.","Save Error","error");
-                }
+// Leaderboard Functions
+async function loadLeaderboard() {
+    const leaderboardList = document.getElementById('leaderboard-list');
+    leaderboardList.innerHTML = '<div class="loading-spinner"></div>';
+    
+    try {
+        const resultsQuery = query(
+            collection(db, "results"),
+            orderBy("score", "desc"),
+            limit(50)
+        );
+        
+        const resultsSnapshot = await getDocs(resultsQuery);
+        const userScores = {};
+        
+        resultsSnapshot.forEach(doc => {
+            const data = doc.data();
+            if (!userScores[data.userId] || data.score > userScores[data.userId].score) {
+                userScores[data.userId] = {
+                    name: data.userName,
+                    score: data.score,
+                    quizzesTaken: 1
+                };
+            } else {
+                userScores[data.userId].quizzesTaken++;
             }
-        }, 300); 
+        });
+
+        const sortedUsers = Object.entries(userScores)
+            .sort(([,a], [,b]) => b.score - a.score)
+            .slice(0, 10);
+
+        leaderboardList.innerHTML = sortedUsers.map(([userId, data], index) => `
+            <div class="leaderboard-item ${userId === currentUser?.uid ? 'current-user' : ''}">
+                <div class="leaderboard-rank ${index < 3 ? `rank-${index + 1}` : ''}">${index + 1}</div>
+                <div class="leaderboard-info">
+                    <div class="leaderboard-name">${data.name}</div>
+                    <div class="leaderboard-stats">
+                        ${data.quizzesTaken} quiz${data.quizzesTaken !== 1 ? 'zes' : ''} taken
+                    </div>
+                </div>
+                <div class="leaderboard-score">${data.score.toFixed(1)}%</div>
+            </div>
+        `).join('');
+    } catch (error) {
+        showPopup('Unable to load leaderboard', 'error');
+        leaderboardList.innerHTML = '<p>Unable to load leaderboard</p>';
     }
+}
 
-    previewAnswersBtn.onclick = () => {
-        startPreviewMode();
-    };
-
-    function startPreviewMode() {
-        isPreviewMode = true;
-        currentPreviewQuestionIndex = 0;
-        quizTitleElement.textContent = `${currentQuizData.title} - Review`;
-        quizDescriptionElement.style.display = "none";
-        progressBarContainer.style.display = "none";
-
-        previewAnswersBtn.style.display = 'none';
-        submitBtn.style.display = 'none';
-        newNextBtnQuiz.style.display = 'none';
-        
-        prevPreviewBtn.style.display = 'block';
-        nextPreviewBtn.style.display = 'block';
-        backToQuizzesBtnFromQuiz.style.display = 'block';
-        
-        scoreBoxDiv.classList.add('visible'); 
-        renderPreviewQuestion(currentPreviewQuestionIndex);
-    }
-
-    function renderPreviewQuestion(questionIdx) {
-        questionBoxDiv.style.opacity = 0;
-        setTimeout(() => {
-            const questionData = currentQuizData.questions[questionIdx];
-            const userAnswer = selectedOptionsMap[questionIdx];
-            const correctAnswer = questionData.answer;
-
-            questionBoxDiv.innerHTML = `<h3>Q${questionIdx + 1}: ${questionData.question}</h3>`;
-
-            questionData.options.forEach(optionText => {
-                const optionButton = document.createElement("button");
-                optionButton.className = "option-btn";
-                optionButton.textContent = optionText;
-                optionButton.disabled = true; 
-
-                if (optionText === userAnswer) {
-                    optionButton.classList.add('user-selected');
-                    if (userAnswer === correctAnswer) {
-                        optionButton.classList.add('actual-correct'); 
-                    } else {
-                        optionButton.classList.add('user-selected-incorrect');
-                    }
-                } else if (optionText === correctAnswer) {
-                    optionButton.classList.add('actual-correct');
-                }
-                questionBoxDiv.appendChild(optionButton);
-            });
-            questionBoxDiv.style.opacity = 1;
-
-            prevPreviewBtn.disabled = questionIdx === 0;
-            nextPreviewBtn.disabled = questionIdx === currentQuizData.questions.length - 1;
-        }, 200); 
-    }
-
-    prevPreviewBtn.onclick = () => {
-        if (currentPreviewQuestionIndex > 0) {
-            currentPreviewQuestionIndex--;
-            renderPreviewQuestion(currentPreviewQuestionIndex);
-        }
-    };
-
-    nextPreviewBtn.onclick = () => {
-        if (currentPreviewQuestionIndex < currentQuizData.questions.length - 1) {
-            currentPreviewQuestionIndex++;
-            renderPreviewQuestion(currentPreviewQuestionIndex);
-        }
-    };
-
-    window.goBackToQuizList = function () { 
-        resetQuizState(); 
-        showQuizListView(); 
-    };
-    window.goBackToQuizListFromLeaderboard = function() { showQuizListView(); };
-    window.goBackToQuizListFromProfile = function() { showQuizListView(); };
-
-    async function loadLeaderboard() {
-        const lbTBody = document.getElementById("leaderboard-table").querySelector("tbody");
-        lbTBody.innerHTML = "<tr class='leaderboard-placeholder'><td colspan='4'>Loading leaderboard...</td></tr>";
-        try {
-            const resultsSnapshot = await getDocs(collection(db, "results")); 
-            const userAggregatedStats = {};
-
-            resultsSnapshot.forEach(resultDoc => {
-                const resultData = resultDoc.data();
-                if (!resultData.userId || typeof resultData.score !== 'number') return; 
-
-                if (!userAggregatedStats[resultData.userId]) {
-                    userAggregatedStats[resultData.userId] = {
-                        totalScore: 0,
-                        quizCount: 0,
-                        name: resultData.userName || 'Anonymous',
-                        uid: resultData.userId
-                    };
-                }
-                userAggregatedStats[resultData.userId].totalScore += resultData.score;
-                userAggregatedStats[resultData.userId].quizCount += 1;
-                if (resultData.userName && resultData.userName !== 'Anonymous') {
-                     userAggregatedStats[resultData.userId].name = resultData.userName;
-                }
-            });
-
-            const usersToFetchNames = Object.values(userAggregatedStats).filter(user => user.name === 'Anonymous' || !user.name);
-            if (usersToFetchNames.length > 0) {
-                const userDocPromises = usersToFetchNames.map(user => getDoc(doc(db, "users", user.uid)).catch(e => { console.warn(`Failed to fetch user doc for ${user.uid}:`, e); return null; }));
-                const userDocSnapshots = await Promise.all(userDocPromises);
-                userDocSnapshots.forEach(userDocSnap => {
-                    if (userDocSnap && userDocSnap.exists()) {
-                        const userData = userDocSnap.data();
-                        if (userAggregatedStats[userDocSnap.id]) {
-                            userAggregatedStats[userDocSnap.id].name = userData.name || 'User';
-                        }
-                    }
-                });
-            }
-
-            const leaderboardArray = Object.values(userAggregatedStats).sort((a, b) => {
-                if (b.totalScore === a.totalScore) { return a.quizCount - b.quizCount;  } 
-                return b.totalScore - a.totalScore; 
-            });
-
-            lbTBody.innerHTML = ""; 
-            if (leaderboardArray.length === 0) {
-                lbTBody.innerHTML = "<tr class='leaderboard-placeholder'><td colspan='4'>No scores yet! Be the first.</td></tr>";
-                return;
-            }
-
-            leaderboardArray.forEach((entry, index) => {
-                const row = lbTBody.insertRow();
-                row.style.animationDelay = `${index * 0.07}s`;
-                
-                if (currentUser && entry.uid === currentUser.uid) {
-                    row.classList.add("current-user-leaderboard");
-                }
-                if (index < 3) {
-                    row.classList.add(`top-rank-${index + 1}`);
-                }
-
-                row.insertCell().textContent = index + 1; // Rank cell
-
-                const nameCell = row.insertCell();
-                if (index < 3 && leaderboardArray.length > index) { // Check if there are enough players for top 3
-                    const badge = document.createElement('i');
-                    badge.classList.add('fas', 'rank-badge');
-                    if (index === 0) {
-                        badge.classList.add('fa-crown', 'rank-1-badge');
-                        badge.title = "1st Place";
-                    } else if (index === 1) {
-                        badge.classList.add('fa-medal', 'rank-2-badge');
-                        badge.title = "2nd Place";
-                    } else if (index === 2) {
-                        badge.classList.add('fa-award', 'rank-3-badge');
-                        badge.title = "3rd Place";
-                    }
-                    nameCell.appendChild(badge);
-                    nameCell.append(` ${entry.name}`); // Add a space before the name
-                } else {
-                    nameCell.textContent = entry.name;
-                }
-                
-                row.insertCell().textContent = entry.quizCount;
-                row.insertCell().textContent = entry.totalScore;
-            });
-        } catch (e) {
-            console.error("Error loading leaderboard: ", e);
-            lbTBody.innerHTML = "<tr class='leaderboard-placeholder'><td colspan='4' style='color:red;'>Could not load leaderboard.</td></tr>";
-            showCustomModal("Failed to load leaderboard: " + e.message, "Leaderboard Error", "error");
-        }
-    }
-
-    async function fetchUserProfileStats() { if (!currentUser) return { quizzesTaken: 0, overallScore: 0 }; let quizzesTaken = 0, overallScore = 0; try { const q = query(collection(db, "results"), where("userId", "==", currentUser.uid)); const querySnapshot = await getDocs(q); quizzesTaken = querySnapshot.size; querySnapshot.forEach(doc => { if (typeof doc.data().score === 'number') { overallScore += doc.data().score; } }); return { quizzesTaken, overallScore }; } catch (e) { console.error("Error fetching user stats:", e); return { quizzesTaken: "N/A", overallScore: "N/A" }; } }
-    async function loadProfile() { if (!currentUser) { showLoginView(); return; } const profileItems = profileDashboardBox.querySelectorAll('.profile-info p'); profileItems.forEach(p => { p.style.opacity = 0; p.style.transform = 'translateY(15px)'; }); profileNameSpan.textContent = currentUserName; profileEmailSpan.textContent = currentUser.email; profileQuizzesTakenSpan.textContent = "Loading..."; profileQuizzesTakenSpan.style.color = ""; profileOverallScoreSpan.textContent = "Loading..."; profileOverallScoreSpan.style.color = ""; const stats = await fetchUserProfileStats(); profileQuizzesTakenSpan.textContent = stats.quizzesTaken; if (stats.quizzesTaken === "N/A") { profileQuizzesTakenSpan.style.color = "#e74c3c"; } profileOverallScoreSpan.textContent = stats.overallScore; if (stats.overallScore === "N/A") { profileOverallScoreSpan.style.color = "#e74c3c"; } profileItems.forEach((p, index) => { setTimeout(() => { p.style.opacity = 1; p.style.transform = 'translateY(0)'; }, index * 100 + 50); }); }
+// Profile Functions
+async function loadProfile() {
+    if (!currentUser) return;
     
-    if (!auth.currentUser) {
-       showLoginView(); 
+    const profileAvatar = document.getElementById('profile-avatar');
+    const profileName = document.getElementById('profile-name');
+    const profileEmail = document.getElementById('profile-email');
+    const quizzesTaken = document.getElementById('profile-quizzes-taken');
+    const avgScore = document.getElementById('profile-avg-score');
+    const bestScore = document.getElementById('profile-best-score');
+    
+    profileAvatar.textContent = currentUserName.charAt(0).toUpperCase();
+    profileName.textContent = currentUserName;
+    profileEmail.textContent = currentUser.email;
+    
+    try {
+        const resultsQuery = query(
+            collection(db, "results"),
+            where("userId", "==", currentUser.uid)
+        );
+        
+        const resultsSnapshot = await getDocs(resultsQuery);
+        const scores = [];
+        
+        resultsSnapshot.forEach(doc => {
+            scores.push(doc.data().score);
+        });
+        
+        if (scores.length > 0) {
+            const average = scores.reduce((a, b) => a + b) / scores.length;
+            const best = Math.max(...scores);
+            
+            quizzesTaken.textContent = scores.length;
+            avgScore.textContent = `${average.toFixed(1)}%`;
+            bestScore.textContent = `${best.toFixed(1)}%`;
+        }
+    } catch (error) {
+        showPopup('Unable to load profile data', 'error');
     }
+}
 
-  </script>
+// Event Listeners
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    await login(email, password);
+});
+
+document.getElementById('register-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('reg-name').value;
+    const email = document.getElementById('reg-email').value;
+    const password = document.getElementById('reg-password').value;
+    await register(name, email, password);
+});
+
+document.getElementById('show-register').addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('login-form').classList.add('hidden');
+    document.getElementById('register-form').classList.remove('hidden');
+});
+
+document.getElementById('show-login').addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('register-form').classList.add('hidden');
+    document.getElementById('login-form').classList.remove('hidden');
+});
+
+document.getElementById('back-to-categories').addEventListener('click', () => {
+    showView(categoriesView);
+});
+
+document.getElementById('leaderboard-back').addEventListener('click', () => {
+    showView(categoriesView);
+});
+
+document.getElementById('profile-back').addEventListener('click', () => {
+    showView(categoriesView);
+});
+
+document.getElementById('next-btn').addEventListener('click', () => {
+    currentQuestionIndex++;
+    displayQuestion();
+});
+
+document.getElementById('quit-btn').addEventListener('click', () => {
+    showPopup('Are you sure you want to quit the quiz?', 'info');
+    const popup = document.getElementById('custom-popup');
+    const closeBtn = popup.querySelector('.popup-close');
+    closeBtn.textContent = 'Yes, Quit';
+    
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'popup-close';
+    cancelBtn.style.marginLeft = 'var(--space-2)';
+    cancelBtn.style.background = 'var(--gray-500)';
+    cancelBtn.textContent = 'Cancel';
+    
+    closeBtn.parentNode.appendChild(cancelBtn);
+    
+    const handleQuit = () => {
+        popup.classList.remove('show');
+        showView(categoriesView);
+        cleanup();
+    };
+    
+    const handleCancel = () => {
+        popup.classList.remove('show');
+        cleanup();
+    };
+    
+    const cleanup = () => {
+        closeBtn.removeEventListener('click', handleQuit);
+        cancelBtn.removeEventListener('click', handleCancel);
+        cancelBtn.remove();
+        closeBtn.textContent = 'OK';
+    };
+    
+    closeBtn.addEventListener('click', handleQuit);
+    cancelBtn.addEventListener('click', handleCancel);
+});
+
+document.getElementById('try-again').addEventListener('click', () => {
+    startQuiz(currentQuizData.id, currentQuizData);
+});
+
+document.getElementById('back-to-home').addEventListener('click', () => {
+    showView(categoriesView);
+});
+
+document.getElementById('leaderboard-icon').addEventListener('click', () => {
+    showView(leaderboardView);
+    loadLeaderboard();
+});
+
+document.getElementById('profile-icon').addEventListener('click', () => {
+    showView(profileView);
+    loadProfile();
+});
+
+document.getElementById('logout-btn').addEventListener('click', async () => {
+    await logout();
+});
+
+// Initialize app
+if (auth.currentUser) {
+    showView(categoriesView);
+    loadCategories();
+} else {
+    showView(authView);
+}
+    </script>
 </body>
-</html>
+              </html>
