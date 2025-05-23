@@ -148,10 +148,12 @@
 
         /* Main Content */
         .main-content {
-            padding-top: calc(4rem + var(--space-4));
+            padding-top: calc(4rem + var(--space-4)); /* Increased padding to avoid overlap with fixed header */
             min-height: 100vh;
             background: var(--gray-50);
+            padding-bottom: var(--space-12); /* Add padding at the bottom */
         }
+
 
         /* Category Grid */
         .category-grid {
@@ -262,14 +264,59 @@
             padding: var(--space-6);
             margin-bottom: var(--space-6);
             box-shadow: var(--shadow-md);
+            position: relative; /* Needed for positioning speak button */
+        }
+
+        .question-header {
+             display: flex;
+             justify-content: space-between;
+             align-items: center;
+             margin-bottom: var(--space-6);
         }
 
         .question-text {
             font-size: 1.125rem;
             font-weight: 600;
             color: var(--gray-900);
-            margin-bottom: var(--space-6);
+            flex: 1; /* Allow question text to grow */
+            padding-right: var(--space-2); /* Add padding to avoid overlap */
         }
+
+        .speak-button {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            border: none;
+            background: var(--primary-light);
+            color: var(--white);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition);
+            flex-shrink: 0; /* Prevent button from shrinking */
+        }
+
+        .speak-button:hover {
+            background: var(--primary);
+        }
+
+         .speak-button:active {
+            transform: scale(0.9);
+         }
+
+         .speak-button.speaking {
+            background: var(--success);
+            animation: pulse 1s infinite;
+         }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
 
         .option-button {
             width: 100%;
@@ -362,7 +409,10 @@
         .leaderboard-header {
             text-align: center;
             margin-bottom: var(--space-6);
+            position: relative; /* Ensure back button is positioned correctly */
+            padding-top: var(--space-4);
         }
+
 
         .leaderboard-title {
             font-size: 1.5rem;
@@ -403,6 +453,7 @@
             justify-content: center;
             font-weight: 700;
             font-size: 1.125rem;
+            flex-shrink: 0;
         }
 
         .rank-1 { background: linear-gradient(135deg, #FFD700, #FFA500); }
@@ -412,12 +463,16 @@
         .leaderboard-info {
             flex: 1;
             margin-left: var(--space-4);
+            overflow: hidden; /* Prevent long names from breaking layout */
         }
 
         .leaderboard-name {
             font-weight: 600;
             color: var(--gray-900);
             margin-bottom: var(--space-1);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .leaderboard-stats {
@@ -429,7 +484,9 @@
             font-weight: 700;
             color: var(--primary);
             font-size: 1.125rem;
+            margin-left: var(--space-2);
         }
+
 
         /* Enhanced Profile Styles */
         .profile-view {
@@ -439,6 +496,8 @@
         .profile-header {
             text-align: center;
             margin-bottom: var(--space-6);
+            position: relative; /* Ensure back button is positioned correctly */
+            padding-top: var(--space-4);
         }
 
         .profile-avatar {
@@ -453,6 +512,7 @@
             font-size: 2rem;
             font-weight: 700;
             margin: 0 auto var(--space-4);
+            margin-top: var(--space-8); /* Adjusted for back button */
         }
 
         .profile-name {
@@ -636,126 +696,118 @@
                 font-size: 1rem;
             }
         }
-        
+
         /* Back Button Styles */
-.back-button {
-    position: absolute;
-    left: var(--space-4);
-    top: var(--space-4);
-    width: 2.5rem;
-    height: 2.5rem;
-    border: none;
-    border-radius: var(--radius-lg);
-    background: var(--gray-100);
-    color: var(--primary);
-    font-size: 1.25rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all var(--transition);
-}
+        .back-button {
+            position: absolute;
+            left: var(--space-4);
+            top: 50%;
+            transform: translateY(-50%); /* Center vertically */
+            width: 2.5rem;
+            height: 2.5rem;
+            border: none;
+            border-radius: var(--radius-lg);
+            background: var(--gray-100);
+            color: var(--primary);
+            font-size: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition);
+            z-index: 10; /* Ensure it's above title */
+        }
 
-.back-button:active {
-    transform: scale(0.95);
-    background: var(--gray-200);
-}
 
-/* Update Header Positions */
-.leaderboard-header, .profile-header {
-    position: relative;
-    padding-top: var(--space-4);
-}
+        .back-button:active {
+            transform: scale(0.95) translateY(-50%);
+            background: var(--gray-200);
+        }
 
-/* Adjust spacing for back button */
-.profile-header .profile-avatar {
-    margin-top: var(--space-8);
-}
         /* Custom Popup Styles */
-.custom-popup {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-}
+        .custom-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
 
-.custom-popup.show {
-    display: flex;
-}
+        .custom-popup.show {
+            display: flex;
+        }
 
-.popup-content {
-    background: var(--white);
-    padding: var(--space-6);
-    border-radius: var(--radius-lg);
-    width: 90%;
-    max-width: 320px;
-    text-align: center;
-    box-shadow: var(--shadow-lg);
-    animation: popup-in 0.3s ease-out;
-}
+        .popup-content {
+            background: var(--white);
+            padding: var(--space-6);
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 320px;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            animation: popup-in 0.3s ease-out;
+        }
 
-@keyframes popup-in {
-    0% {
-        transform: scale(0.9);
-        opacity: 0;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
+        @keyframes popup-in {
+            0% {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
 
-.popup-icon {
-    font-size: 2rem;
-    margin-bottom: var(--space-4);
-}
+        .popup-icon {
+            font-size: 2rem;
+            margin-bottom: var(--space-4);
+        }
 
-.popup-icon .fa-check-circle {
-    color: var(--success);
-}
+        .popup-icon .fa-check-circle {
+            color: var(--success);
+        }
 
-.popup-icon .fa-exclamation-circle {
-    color: var(--error);
-}
+        .popup-icon .fa-exclamation-circle {
+            color: var(--error);
+        }
 
-.popup-icon .fa-info-circle {
-    color: var(--primary);
-}
+        .popup-icon .fa-info-circle {
+            color: var(--primary);
+        }
 
-.popup-message {
-    color: var(--gray-800);
-    margin-bottom: var(--space-4);
-    font-size: 1rem;
-    line-height: 1.5;
-}
+        .popup-message {
+            color: var(--gray-800);
+            margin-bottom: var(--space-4);
+            font-size: 1rem;
+            line-height: 1.5;
+        }
 
-.popup-close {
-    background: var(--primary);
-    color: var(--white);
-    border: none;
-    padding: var(--space-2) var(--space-8);
-    border-radius: var(--radius);
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: all var(--transition);
-}
+        .popup-close {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: var(--space-2) var(--space-8);
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
 
-.popup-close:active {
-    transform: scale(0.95);
-}
+        .popup-close:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 <body>
     <div id="app" class="app-container">
-        <!-- Header -->
         <header class="app-header hidden-initial" id="app-header">
             <div class="header-icon" id="leaderboard-icon">
                 <i class="fas fa-trophy"></i>
@@ -766,9 +818,7 @@
             </div>
         </header>
 
-        <!-- Main Content -->
         <main class="main-content">
-            <!-- Auth View -->
             <section id="auth-view" class="auth-container">
                 <h2 class="auth-title">Welcome Back</h2>
                 <form id="login-form" class="login-fields-group">
@@ -806,12 +856,10 @@
                 </form>
             </section>
 
-            <!-- Categories View -->
             <section id="categories-view" class="hidden">
                 <div class="category-grid" id="category-grid-container"></div>
             </section>
 
-            <!-- Quiz List View -->
             <section id="quiz-list-view" class="quiz-list hidden">
                 <button class="button button-secondary mb-4" id="back-to-categories">
                     <i class="fas fa-arrow-left"></i> Back to Categories
@@ -819,13 +867,13 @@
                 <div id="quiz-items-container"></div>
             </section>
 
-            <!-- Quiz Taking View -->
             <section id="quiz-view" class="quiz-container hidden">
                 <div class="progress-bar-container">
                     <div id="progress-bar" class="progress-bar"></div>
                 </div>
 
-                <div class="question-box" id="question-box"></div>
+                <div class="question-box" id="question-box">
+                    </div>
 
                 <div class="button-container">
                     <button id="next-btn" class="button button-primary" disabled>Next Question</button>
@@ -834,7 +882,6 @@
                 </div>
             </section>
 
-            <!-- Score View -->
             <section id="score-view" class="score-container hidden">
                 <h2 class="score-title">Quiz Complete!</h2>
                 <div class="score-details">
@@ -855,57 +902,52 @@
                 <button class="button button-secondary" id="back-to-home">Back to Home</button>
             </section>
 
- <!-- Leaderboard View -->
-<section id="leaderboard-view" class="leaderboard-view hidden">
-    <div class="leaderboard-header">
-        <button class="back-button" id="leaderboard-back">
-            <i class="fas fa-arrow-left"></i>
-        </button>
-        <h2 class="leaderboard-title">Leaderboard</h2>
-        <p class="leaderboard-subtitle">Top performers this month</p>
-    </div>
-    <div class="leaderboard-list" id="leaderboard-list">
-        <!-- Leaderboard items will be dynamically added here -->
-    </div>
-</section>
+            <section id="leaderboard-view" class="leaderboard-view hidden">
+                <div class="leaderboard-header">
+                    <button class="back-button" id="leaderboard-back">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h2 class="leaderboard-title">Leaderboard</h2>
+                    <p class="leaderboard-subtitle">Top performers this month</p>
+                </div>
+                <div class="leaderboard-list" id="leaderboard-list">
+                    </div>
+            </section>
 
-<!-- Profile View -->
-<section id="profile-view" class="profile-view hidden">
-    <div class="profile-header">
-        <button class="back-button" id="profile-back">
-            <i class="fas fa-arrow-left"></i>
-        </button>
-        <div class="profile-avatar" id="profile-avatar"></div>
-        <h2 class="profile-name" id="profile-name"></h2>
-        <p class="profile-email" id="profile-email"></p>
-    </div>
-    <div class="profile-stats">
-        <div class="stat-item">
-            <span class="stat-label">Quizzes Taken</span>
-            <span class="stat-value" id="profile-quizzes-taken">0</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-label">Average Score</span>
-            <span class="stat-value" id="profile-avg-score">0%</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-label">Best Score</span>
-            <span class="stat-value" id="profile-best-score">0%</span>
-        </div>
-    </div>
-    <div class="profile-actions">
-        <button class="button button-primary" id="logout-btn">
-            Logout
-        </button>
-    </div>
-</section>
+            <section id="profile-view" class="profile-view hidden">
+                <div class="profile-header">
+                    <button class="back-button" id="profile-back">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <div class="profile-avatar" id="profile-avatar"></div>
+                    <h2 class="profile-name" id="profile-name"></h2>
+                    <p class="profile-email" id="profile-email"></p>
+                </div>
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Quizzes Taken</span>
+                        <span class="stat-value" id="profile-quizzes-taken">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Average Score</span>
+                        <span class="stat-value" id="profile-avg-score">0%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Best Score</span>
+                        <span class="stat-value" id="profile-best-score">0%</span>
+                    </div>
+                </div>
+                <div class="profile-actions">
+                    <button class="button button-primary" id="logout-btn">
+                        Logout
+                    </button>
+                </div>
+            </section>
         </main>
 
-        <!-- Toast Message -->
         <div id="toast" class="toast"></div>
     </div>
-    <!-- Custom Popup -->
-<div id="custom-popup" class="custom-popup">
+    <div id="custom-popup" class="custom-popup">
     <div class="popup-content">
         <div class="popup-icon">
             <i class="fas"></i>
@@ -918,9 +960,9 @@
     <script type="module">
 // Firebase Imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, getDoc, addDoc, query, where, orderBy, limit, setDoc } 
+import { getFirestore, collection, getDocs, doc, getDoc, addDoc, query, where, orderBy, limit, setDoc }
     from "https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword, signOut } 
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword, signOut }
     from "https://www.gstatic.com/firebasejs/11.7.1/firebase-auth.js";
 
 // Firebase Configuration
@@ -945,6 +987,7 @@ let currentQuizData = null;
 let currentQuestionIndex = 0;
 let userAnswers = [];
 let quizScore = 0;
+let isSpeaking = false; // <<< NEW: Track speaking state
 
 // DOM Elements
 const appHeader = document.getElementById('app-header');
@@ -961,6 +1004,10 @@ function showView(viewToShow) {
     [authView, categoriesView, quizListView, quizView, scoreView, leaderboardView, profileView]
         .forEach(view => view.classList.add('hidden'));
     viewToShow.classList.remove('hidden');
+    // <<< NEW: Stop speech when changing views
+    if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+         window.speechSynthesis.cancel();
+    }
 }
 
 // Popup handling
@@ -968,7 +1015,7 @@ function showPopup(message, type = 'info') {
     const popup = document.getElementById('custom-popup');
     const icon = popup.querySelector('.fas');
     const messageEl = popup.querySelector('.popup-message');
-    
+
     // Set icon based on type
     icon.className = 'fas';
     switch (type) {
@@ -981,10 +1028,10 @@ function showPopup(message, type = 'info') {
         default:
             icon.classList.add('fa-info-circle');
     }
-    
+
     messageEl.textContent = message;
     popup.classList.add('show');
-    
+
     // Add click event to close button
     const closeBtn = popup.querySelector('.popup-close');
     const closePopup = () => {
@@ -1072,17 +1119,17 @@ async function logout() {
 async function loadCategories() {
     const categoryGrid = document.getElementById('category-grid-container');
     categoryGrid.innerHTML = '<div class="loading-spinner"></div>';
-    
+
     try {
         const categoriesSnapshot = await getDocs(collection(db, "categories"));
         const quizzesSnapshot = await getDocs(collection(db, "quizzes"));
-        
+
         const quizCounts = {};
         quizzesSnapshot.forEach(doc => {
             const category = doc.data().category;
             quizCounts[category] = (quizCounts[category] || 0) + 1;
         });
-        
+
         categoryGrid.innerHTML = '';
         categoriesSnapshot.forEach(doc => {
             const data = doc.data();
@@ -1095,19 +1142,13 @@ async function loadCategories() {
     }
 }
 
-// In the user panel, modify the createCategoryCard function to use the icon from the database:
 
 function createCategoryCard(category, id) {
     const card = document.createElement('div');
     card.className = 'category-card';
-    
-    // Use the iconClass from the category data (stored in database)
-    // If no iconClass is provided, fallback to a default icon
     const iconClass = category.iconClass || 'fas fa-folder';
-    
-    // Use the color from the category data or fallback to default
     const categoryColor = category.color || '#4f46e5';
-    
+
     card.innerHTML = `
         <div class="category-icon" style="background: ${categoryColor}">
             <i class="${iconClass}"></i>
@@ -1119,13 +1160,12 @@ function createCategoryCard(category, id) {
         </span>
     `;
 
-    // Add hover effect styles
     card.style.transition = 'all 0.3s ease';
     card.addEventListener('mouseenter', () => {
         card.style.transform = 'translateY(-5px)';
         card.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
     });
-    
+
     card.addEventListener('mouseleave', () => {
         card.style.transform = 'translateY(0)';
         card.style.boxShadow = 'var(--shadow)';
@@ -1140,7 +1180,7 @@ async function loadQuizzes(categoryName) {
     showView(quizListView);
     const quizContainer = document.getElementById('quiz-items-container');
     quizContainer.innerHTML = '<div class="loading-spinner"></div>';
-    
+
     try {
         const quizQuery = query(
             collection(db, "quizzes"),
@@ -1148,7 +1188,7 @@ async function loadQuizzes(categoryName) {
         );
         const quizzesSnapshot = await getDocs(quizQuery);
         quizContainer.innerHTML = '';
-        
+
         quizzesSnapshot.forEach(doc => {
             const data = doc.data();
             data.id = doc.id;
@@ -1183,20 +1223,28 @@ function startQuiz(id, quiz) {
 }
 
 function displayQuestion() {
+    // <<< NEW: Stop any ongoing speech before displaying the new question
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+    }
+
     const question = currentQuizData.questions[currentQuestionIndex];
     const questionBox = document.getElementById('question-box');
     const nextBtn = document.getElementById('next-btn');
     const submitBtn = document.getElementById('submit-btn');
-    
+
     nextBtn.disabled = true;
-    
-    // Show submit button on last question
     nextBtn.style.display = currentQuestionIndex === currentQuizData.questions.length - 1 ? 'none' : 'block';
     submitBtn.style.display = currentQuestionIndex === currentQuizData.questions.length - 1 ? 'block' : 'none';
-    
+
     questionBox.innerHTML = `
         <h3 class="question-text">Question ${currentQuestionIndex + 1} of ${currentQuizData.questions.length}</h3>
-        <p class="question-text">${question.question}</p>
+        <div class="question-header">
+            <p class="question-text">${question.question}</p>
+            <button class="speak-button" id="speak-btn" title="Read Question">
+                <i class="fas fa-volume-up"></i>
+            </button>
+        </div>
         <div class="options-container">
             ${question.options.map((option, index) => `
                 <button class="option-button" data-index="${index}">${option}</button>
@@ -1204,23 +1252,79 @@ function displayQuestion() {
         </div>
     `;
 
-    // Update progress bar
     const progress = ((currentQuestionIndex + 1) / currentQuizData.questions.length) * 100;
     document.getElementById('progress-bar').style.width = `${progress}%`;
 
-    // Add click listeners to options
     questionBox.querySelectorAll('.option-button').forEach(button => {
         button.addEventListener('click', () => selectAnswer(button.dataset.index));
     });
+
+    // <<< NEW: Add event listener for the speak button
+    document.getElementById('speak-btn').addEventListener('click', speakQuizContent);
 }
 
+// <<< NEW: Function to handle Text-to-Speech
+function speakQuizContent() {
+    if (!('speechSynthesis' in window)) {
+        showPopup("Sorry, your browser doesn't support Text-to-Speech.", 'error');
+        return;
+    }
+
+    const speakButton = document.getElementById('speak-btn');
+    const questionTextElement = document.querySelector('.question-box .question-text:not(h3)'); // Target the actual question P tag
+    const optionButtons = document.querySelectorAll('.option-button');
+
+    // If already speaking, stop it
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        speakButton.classList.remove('speaking');
+        speakButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+        return;
+    }
+
+    const questionText = questionTextElement ? questionTextElement.textContent : '';
+    const optionsText = Array.from(optionButtons).map((btn, index) => `Option ${index + 1}: ${btn.textContent}`).join('. ');
+
+    const fullText = `${questionText}. Options are: ${optionsText}`;
+
+    const utterance = new SpeechSynthesisUtterance(fullText);
+
+    utterance.onstart = () => {
+        speakButton.classList.add('speaking');
+        speakButton.innerHTML = '<i class="fas fa-stop"></i>'; // Change icon to stop
+        speakButton.title = "Stop Reading";
+    };
+
+    utterance.onend = () => {
+        speakButton.classList.remove('speaking');
+        speakButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+        speakButton.title = "Read Question";
+    };
+
+     utterance.onerror = (event) => {
+        console.error('SpeechSynthesisUtterance.onerror', event);
+        showPopup('An error occurred during speech synthesis.', 'error');
+        speakButton.classList.remove('speaking');
+        speakButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+        speakButton.title = "Read Question";
+    };
+
+    window.speechSynthesis.speak(utterance);
+}
+
+
 function selectAnswer(index) {
+     // <<< NEW: Stop speech when an answer is selected
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+    }
+
     const question = currentQuizData.questions[currentQuestionIndex];
     const correct = question.options[index] === question.answer;
     userAnswers[currentQuestionIndex] = index;
-    
+
     if (correct) quizScore++;
-    
+
     const buttons = document.querySelectorAll('.option-button');
     buttons.forEach(button => {
         button.disabled = true;
@@ -1232,11 +1336,9 @@ function selectAnswer(index) {
         }
     });
 
-    // If it's the last question, automatically show results after a delay
     if (currentQuestionIndex === currentQuizData.questions.length - 1) {
         setTimeout(showQuizResults, 1000);
     } else {
-        // Enable next button after answering
         const nextBtn = document.getElementById('next-btn');
         nextBtn.disabled = false;
         nextBtn.focus();
@@ -1246,11 +1348,11 @@ function selectAnswer(index) {
 function showQuizResults() {
     showView(scoreView);
     const percentage = (quizScore / currentQuizData.questions.length) * 100;
-    
+
     document.getElementById('total-questions').textContent = currentQuizData.questions.length;
     document.getElementById('correct-answers').textContent = quizScore;
     document.getElementById('final-score').textContent = `${percentage.toFixed(1)}%`;
-    
+
     if (currentUser) {
         saveQuizResult(percentage);
     }
@@ -1275,17 +1377,17 @@ async function saveQuizResult(score) {
 async function loadLeaderboard() {
     const leaderboardList = document.getElementById('leaderboard-list');
     leaderboardList.innerHTML = '<div class="loading-spinner"></div>';
-    
+
     try {
         const resultsQuery = query(
             collection(db, "results"),
             orderBy("score", "desc"),
             limit(50)
         );
-        
+
         const resultsSnapshot = await getDocs(resultsQuery);
         const userScores = {};
-        
+
         resultsSnapshot.forEach(doc => {
             const data = doc.data();
             if (!userScores[data.userId] || data.score > userScores[data.userId].score) {
@@ -1324,38 +1426,42 @@ async function loadLeaderboard() {
 // Profile Functions
 async function loadProfile() {
     if (!currentUser) return;
-    
+
     const profileAvatar = document.getElementById('profile-avatar');
     const profileName = document.getElementById('profile-name');
     const profileEmail = document.getElementById('profile-email');
     const quizzesTaken = document.getElementById('profile-quizzes-taken');
     const avgScore = document.getElementById('profile-avg-score');
     const bestScore = document.getElementById('profile-best-score');
-    
+
     profileAvatar.textContent = currentUserName.charAt(0).toUpperCase();
     profileName.textContent = currentUserName;
     profileEmail.textContent = currentUser.email;
-    
+
     try {
         const resultsQuery = query(
             collection(db, "results"),
             where("userId", "==", currentUser.uid)
         );
-        
+
         const resultsSnapshot = await getDocs(resultsQuery);
         const scores = [];
-        
+
         resultsSnapshot.forEach(doc => {
             scores.push(doc.data().score);
         });
-        
+
         if (scores.length > 0) {
             const average = scores.reduce((a, b) => a + b) / scores.length;
             const best = Math.max(...scores);
-            
+
             quizzesTaken.textContent = scores.length;
             avgScore.textContent = `${average.toFixed(1)}%`;
             bestScore.textContent = `${best.toFixed(1)}%`;
+        } else {
+             quizzesTaken.textContent = 0;
+             avgScore.textContent = `0%`;
+             bestScore.textContent = `0%`;
         }
     } catch (error) {
         showPopup('Unable to load profile data', 'error');
@@ -1408,40 +1514,58 @@ document.getElementById('next-btn').addEventListener('click', () => {
 });
 
 document.getElementById('quit-btn').addEventListener('click', () => {
-    showPopup('Are you sure you want to quit the quiz?', 'info');
+    // <<< NEW: Stop speech when quitting
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+    }
+
     const popup = document.getElementById('custom-popup');
     const closeBtn = popup.querySelector('.popup-close');
+    const messageEl = popup.querySelector('.popup-message');
+    const iconEl = popup.querySelector('.fas');
+
+    messageEl.textContent = 'Are you sure you want to quit the quiz?';
+    iconEl.className = 'fas fa-info-circle';
     closeBtn.textContent = 'Yes, Quit';
-    
+
     const cancelBtn = document.createElement('button');
     cancelBtn.className = 'popup-close';
     cancelBtn.style.marginLeft = 'var(--space-2)';
     cancelBtn.style.background = 'var(--gray-500)';
     cancelBtn.textContent = 'Cancel';
-    
-    closeBtn.parentNode.appendChild(cancelBtn);
-    
+
+    // Ensure only one cancel button exists
+    if (!closeBtn.parentNode.querySelector('.popup-close + .popup-close')) {
+         closeBtn.parentNode.appendChild(cancelBtn);
+    }
+
+
     const handleQuit = () => {
         popup.classList.remove('show');
         showView(categoriesView);
         cleanup();
     };
-    
+
     const handleCancel = () => {
         popup.classList.remove('show');
         cleanup();
     };
-    
+
     const cleanup = () => {
         closeBtn.removeEventListener('click', handleQuit);
         cancelBtn.removeEventListener('click', handleCancel);
-        cancelBtn.remove();
+        if (cancelBtn.parentNode) {
+           cancelBtn.parentNode.removeChild(cancelBtn);
+        }
         closeBtn.textContent = 'OK';
     };
-    
-    closeBtn.addEventListener('click', handleQuit);
-    cancelBtn.addEventListener('click', handleCancel);
+
+    closeBtn.addEventListener('click', handleQuit, { once: true });
+    cancelBtn.addEventListener('click', handleCancel, { once: true });
+
+    popup.classList.add('show');
 });
+
 
 document.getElementById('try-again').addEventListener('click', () => {
     startQuiz(currentQuizData.id, currentQuizData);
