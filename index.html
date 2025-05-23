@@ -1095,16 +1095,42 @@ async function loadCategories() {
     }
 }
 
+// In the user panel, modify the createCategoryCard function to use the icon from the database:
+
 function createCategoryCard(category, id) {
     const card = document.createElement('div');
     card.className = 'category-card';
+    
+    // Use the iconClass from the category data (stored in database)
+    // If no iconClass is provided, fallback to a default icon
+    const iconClass = category.iconClass || 'fas fa-folder';
+    
+    // Use the color from the category data or fallback to default
+    const categoryColor = category.color || '#4f46e5';
+    
     card.innerHTML = `
-        <div class="category-icon">
-            <i class="${category.icon || 'fas fa-book'}"></i>
+        <div class="category-icon" style="background: ${categoryColor}">
+            <i class="${iconClass}"></i>
         </div>
         <h3 class="category-name">${category.name}</h3>
-        <span class="category-count">${category.quizCount} Quiz${category.quizCount !== 1 ? 'zes' : ''}</span>
+        <span class="category-count">
+            <i class="fas fa-book-open" style="margin-right: 5px; color: ${categoryColor}"></i>
+            ${category.quizCount} Quiz${category.quizCount !== 1 ? 'zes' : ''}
+        </span>
     `;
+
+    // Add hover effect styles
+    card.style.transition = 'all 0.3s ease';
+    card.addEventListener('mouseenter', () => {
+        card.style.transform = 'translateY(-5px)';
+        card.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
+    });
+    
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = 'translateY(0)';
+        card.style.boxShadow = 'var(--shadow)';
+    });
+
     card.addEventListener('click', () => loadQuizzes(category.name));
     document.getElementById('category-grid-container').appendChild(card);
 }
@@ -1448,4 +1474,4 @@ if (auth.currentUser) {
 }
     </script>
 </body>
-              </html>
+</html>
