@@ -987,7 +987,7 @@ let currentQuizData = null;
 let currentQuestionIndex = 0;
 let userAnswers = [];
 let quizScore = 0;
-let isSpeaking = false; // <<< NEW: Track speaking state
+let userInitiatedCancel = false; // <<< NEW: Flag to track user cancels
 
 // DOM Elements
 const appHeader = document.getElementById('app-header');
@@ -1004,8 +1004,9 @@ function showView(viewToShow) {
     [authView, categoriesView, quizListView, quizView, scoreView, leaderboardView, profileView]
         .forEach(view => view.classList.add('hidden'));
     viewToShow.classList.remove('hidden');
-    // <<< NEW: Stop speech when changing views
+    // Stop speech when changing views and set flag
     if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+         userInitiatedCancel = true; // <<< Set flag
          window.speechSynthesis.cancel();
     }
 }
@@ -1223,8 +1224,9 @@ function startQuiz(id, quiz) {
 }
 
 function displayQuestion() {
-    // <<< NEW: Stop any ongoing speech before displaying the new question
-    if ('speechSynthesis' in window) {
+    // Stop any ongoing speech before displaying the new question
+    if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+        userInitiatedCancel = true; // Set flag
         window.speechSynthesis.cancel();
     }
 
@@ -1259,11 +1261,11 @@ function displayQuestion() {
         button.addEventListener('click', () => selectAnswer(button.dataset.index));
     });
 
-    // <<< NEW: Add event listener for the speak button
+    // Add event listener for the speak button
     document.getElementById('speak-btn').addEventListener('click', speakQuizContent);
 }
 
-// <<< NEW: Function to handle Text-to-Speech
+// <<< MODIFIED: Function to handle Text-to-Speech with Flag
 function speakQuizContent() {
     if (!('speechSynthesis' in window)) {
         showPopup("Sorry, your browser doesn't support Text-to-Speech.", 'error');
@@ -1271,42 +1273,58 @@ function speakQuizContent() {
     }
 
     const speakButton = document.getElementById('speak-btn');
-    const questionTextElement = document.querySelector('.question-box .question-text:not(h3)'); // Target the actual question P tag
+    const questionTextElement = document.querySelector('.question-box .question-text:not(h3)');
     const optionButtons = document.querySelectorAll('.option-button');
 
-    // If already speaking, stop it
+    // If already speaking, stop it (handles clicking the stop button)
     if (window.speechSynthesis.speaking) {
+        userInitiatedCancel = true; // <<< Set flag
         window.speechSynthesis.cancel();
-        speakButton.classList.remove('speaking');
-        speakButton.innerHTML = '<i class="fas fa-volume-up"></i>';
         return;
     }
 
     const questionText = questionTextElement ? questionTextElement.textContent : '';
     const optionsText = Array.from(optionButtons).map((btn, index) => `Option ${index + 1}: ${btn.textContent}`).join('. ');
-
     const fullText = `${questionText}. Options are: ${optionsText}`;
-
     const utterance = new SpeechSynthesisUtterance(fullText);
 
-    utterance.onstart = () => {
-        speakButton.classList.add('speaking');
-        speakButton.innerHTML = '<i class="fas fa-stop"></i>'; // Change icon to stop
-        speakButton.title = "Stop Reading";
+    const clickToStopHandler = (event) => {
+        if (event.target.closest('#speak-btn')) {
+             return;
+        }
+        if (window.speechSynthesis.speaking) {
+            userInitiatedCancel = true; // <<< Set flag
+            window.speechSynthesis.cancel();
+        }
     };
 
-    utterance.onend = () => {
+    const cleanupSpeech = () => {
         speakButton.classList.remove('speaking');
         speakButton.innerHTML = '<i class="fas fa-volume-up"></i>';
         speakButton.title = "Read Question";
+        document.removeEventListener('click', clickToStopHandler, true);
+        userInitiatedCancel = false; // <<< Reset flag
+    };
+
+    utterance.onstart = () => {
+        userInitiatedCancel = false; // <<< Ensure flag is false at start
+        speakButton.classList.add('speaking');
+        speakButton.innerHTML = '<i class="fas fa-stop"></i>';
+        speakButton.title = "Stop Reading";
+        document.addEventListener('click', clickToStopHandler, true);
+    };
+
+    utterance.onend = () => {
+        cleanupSpeech(); // Calls cleanup which resets flag
     };
 
      utterance.onerror = (event) => {
         console.error('SpeechSynthesisUtterance.onerror', event);
-        showPopup('An error occurred during speech synthesis.', 'error');
-        speakButton.classList.remove('speaking');
-        speakButton.innerHTML = '<i class="fas fa-volume-up"></i>';
-        speakButton.title = "Read Question";
+        // <<< MODIFIED: Only show popup if it wasn't a user cancel
+        if (!userInitiatedCancel) {
+            showPopup('An error occurred during speech synthesis.', 'error');
+        }
+        cleanupSpeech(); // Cleanup regardless
     };
 
     window.speechSynthesis.speak(utterance);
@@ -1314,8 +1332,9 @@ function speakQuizContent() {
 
 
 function selectAnswer(index) {
-     // <<< NEW: Stop speech when an answer is selected
-    if ('speechSynthesis' in window) {
+     // Stop speech when an answer is selected
+    if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+        userInitiatedCancel = true; // <<< Set flag
         window.speechSynthesis.cancel();
     }
 
@@ -1514,8 +1533,9 @@ document.getElementById('next-btn').addEventListener('click', () => {
 });
 
 document.getElementById('quit-btn').addEventListener('click', () => {
-    // <<< NEW: Stop speech when quitting
-    if ('speechSynthesis' in window) {
+    // Stop speech when quitting and set flag
+    if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+        userInitiatedCancel = true; // <<< Set flag
         window.speechSynthesis.cancel();
     }
 
