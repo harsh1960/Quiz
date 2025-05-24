@@ -650,6 +650,20 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Spinner for buttons */
+        .button .loading-spinner-inline {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid var(--white);
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: var(--space-2);
+            margin-bottom: 2px;
+        }
+
         /* Toast Messages */
         .toast {
             position: fixed;
@@ -804,6 +818,44 @@
         .popup-close:active {
             transform: scale(0.95);
         }
+
+        /* <<< NEW: Loading Overlay Styles >>> */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-content {
+            background: var(--white);
+            padding: var(--space-8);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            color: var(--gray-800);
+            font-weight: 500;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .loading-content .loading-spinner {
+            margin-bottom: var(--space-4);
+            width: 40px;
+            height: 40px;
+            border-width: 4px;
+        }
+
     </style>
 </head>
 <body>
@@ -819,7 +871,7 @@
         </header>
 
         <main class="main-content">
-            <section id="auth-view" class="auth-container">
+            <section id="auth-view" class="auth-container hidden">
                 <h2 class="auth-title">Welcome Back</h2>
                 <form id="login-form" class="login-fields-group">
                     <div class="input-group">
@@ -948,14 +1000,20 @@
         <div id="toast" class="toast"></div>
     </div>
     <div id="custom-popup" class="custom-popup">
-    <div class="popup-content">
-        <div class="popup-icon">
-            <i class="fas"></i>
+        <div class="popup-content">
+            <div class="popup-icon">
+                <i class="fas"></i>
+            </div>
+            <div class="popup-message"></div>
+            <button class="popup-close">OK</button>
         </div>
-        <div class="popup-message"></div>
-        <button class="popup-close">OK</button>
     </div>
-</div>
+    <div id="loading-overlay" class="loading-overlay show">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Checking authentication...</p>
+        </div>
+    </div>
 
     <script type="module">
 // Firebase Imports
@@ -987,7 +1045,7 @@ let currentQuizData = null;
 let currentQuestionIndex = 0;
 let userAnswers = [];
 let quizScore = 0;
-let userInitiatedCancel = false; // <<< NEW: Flag to track user cancels
+let userInitiatedCancel = false;
 
 // DOM Elements
 const appHeader = document.getElementById('app-header');
@@ -998,15 +1056,15 @@ const quizView = document.getElementById('quiz-view');
 const scoreView = document.getElementById('score-view');
 const leaderboardView = document.getElementById('leaderboard-view');
 const profileView = document.getElementById('profile-view');
+const loadingOverlay = document.getElementById('loading-overlay'); // <<< NEW: Loading Overlay Ref
 
 // View Management
 function showView(viewToShow) {
     [authView, categoriesView, quizListView, quizView, scoreView, leaderboardView, profileView]
         .forEach(view => view.classList.add('hidden'));
     viewToShow.classList.remove('hidden');
-    // Stop speech when changing views and set flag
     if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
-         userInitiatedCancel = true; // <<< Set flag
+         userInitiatedCancel = true;
          window.speechSynthesis.cancel();
     }
 }
@@ -1017,23 +1075,16 @@ function showPopup(message, type = 'info') {
     const icon = popup.querySelector('.fas');
     const messageEl = popup.querySelector('.popup-message');
 
-    // Set icon based on type
     icon.className = 'fas';
     switch (type) {
-        case 'success':
-            icon.classList.add('fa-check-circle');
-            break;
-        case 'error':
-            icon.classList.add('fa-exclamation-circle');
-            break;
-        default:
-            icon.classList.add('fa-info-circle');
+        case 'success': icon.classList.add('fa-check-circle'); break;
+        case 'error': icon.classList.add('fa-exclamation-circle'); break;
+        default: icon.classList.add('fa-info-circle');
     }
 
     messageEl.textContent = message;
     popup.classList.add('show');
 
-    // Add click event to close button
     const closeBtn = popup.querySelector('.popup-close');
     const closePopup = () => {
         popup.classList.remove('show');
@@ -1056,7 +1107,7 @@ const errorMessages = {
     'auth/invalid-login-credentials': 'Invalid email or password.'
 };
 
-// Auth Event Listener
+// <<< MODIFIED: Auth Event Listener >>>
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         currentUser = user;
@@ -1069,24 +1120,36 @@ onAuthStateChanged(auth, async (user) => {
             loadCategories();
         } catch (error) {
             showPopup('Unable to load user data', 'error');
+            showView(authView); // Fallback to auth view on error
         }
     } else {
         currentUser = null;
-        showView(authView);
+        showView(authView); // Show login/register if no user
     }
+    // Hide loading overlay once auth check is complete
+    loadingOverlay.classList.remove('show');
     appHeader.classList.toggle('hidden-initial', !user);
 });
 
-// Authentication Functions
+// <<< MODIFIED: Login Function with Loading State >>>
 async function login(email, password) {
+    const loginButton = document.querySelector('#login-form button[type="submit"]');
+    const originalButtonText = loginButton.textContent;
+    loginButton.disabled = true;
+    loginButton.innerHTML = '<div class="loading-spinner-inline"></div> Logging in...';
+
     try {
         await signInWithEmailAndPassword(auth, email, password);
-        showPopup('Login successful!', 'success');
+        // Let onAuthStateChanged handle the success view change.
+        // It will eventually restore button state if needed, but view change is likely.
     } catch (error) {
         const message = errorMessages[error.code] || 'Unable to login. Please try again.';
         showPopup(message, 'error');
+        loginButton.disabled = false; // Restore button on error
+        loginButton.innerHTML = originalButtonText; // Restore text on error
     }
 }
+
 
 async function register(name, email, password) {
     try {
@@ -1116,21 +1179,18 @@ async function logout() {
     }
 }
 
-// Categories Functions
+// Categories Functions (Unchanged)
 async function loadCategories() {
     const categoryGrid = document.getElementById('category-grid-container');
     categoryGrid.innerHTML = '<div class="loading-spinner"></div>';
-
     try {
         const categoriesSnapshot = await getDocs(collection(db, "categories"));
         const quizzesSnapshot = await getDocs(collection(db, "quizzes"));
-
         const quizCounts = {};
         quizzesSnapshot.forEach(doc => {
             const category = doc.data().category;
             quizCounts[category] = (quizCounts[category] || 0) + 1;
         });
-
         categoryGrid.innerHTML = '';
         categoriesSnapshot.forEach(doc => {
             const data = doc.data();
@@ -1143,13 +1203,11 @@ async function loadCategories() {
     }
 }
 
-
 function createCategoryCard(category, id) {
     const card = document.createElement('div');
     card.className = 'category-card';
     const iconClass = category.iconClass || 'fas fa-folder';
     const categoryColor = category.color || '#4f46e5';
-
     card.innerHTML = `
         <div class="category-icon" style="background: ${categoryColor}">
             <i class="${iconClass}"></i>
@@ -1160,36 +1218,28 @@ function createCategoryCard(category, id) {
             ${category.quizCount} Quiz${category.quizCount !== 1 ? 'zes' : ''}
         </span>
     `;
-
     card.style.transition = 'all 0.3s ease';
     card.addEventListener('mouseenter', () => {
         card.style.transform = 'translateY(-5px)';
         card.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
     });
-
     card.addEventListener('mouseleave', () => {
         card.style.transform = 'translateY(0)';
         card.style.boxShadow = 'var(--shadow)';
     });
-
     card.addEventListener('click', () => loadQuizzes(category.name));
     document.getElementById('category-grid-container').appendChild(card);
 }
 
-// Quiz List Functions
+// Quiz List Functions (Unchanged)
 async function loadQuizzes(categoryName) {
     showView(quizListView);
     const quizContainer = document.getElementById('quiz-items-container');
     quizContainer.innerHTML = '<div class="loading-spinner"></div>';
-
     try {
-        const quizQuery = query(
-            collection(db, "quizzes"),
-            where("category", "==", categoryName)
-        );
+        const quizQuery = query(collection(db, "quizzes"), where("category", "==", categoryName));
         const quizzesSnapshot = await getDocs(quizQuery);
         quizContainer.innerHTML = '';
-
         quizzesSnapshot.forEach(doc => {
             const data = doc.data();
             data.id = doc.id;
@@ -1212,7 +1262,7 @@ function createQuizItem(quiz, id) {
     document.getElementById('quiz-items-container').appendChild(quizElement);
 }
 
-// Quiz Taking Functions
+// Quiz Taking Functions (Unchanged - TTS part remains)
 function startQuiz(id, quiz) {
     currentQuizData = quiz;
     currentQuizData.id = id;
@@ -1224,21 +1274,17 @@ function startQuiz(id, quiz) {
 }
 
 function displayQuestion() {
-    // Stop any ongoing speech before displaying the new question
     if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
-        userInitiatedCancel = true; // Set flag
+        userInitiatedCancel = true;
         window.speechSynthesis.cancel();
     }
-
     const question = currentQuizData.questions[currentQuestionIndex];
     const questionBox = document.getElementById('question-box');
     const nextBtn = document.getElementById('next-btn');
     const submitBtn = document.getElementById('submit-btn');
-
     nextBtn.disabled = true;
     nextBtn.style.display = currentQuestionIndex === currentQuizData.questions.length - 1 ? 'none' : 'block';
     submitBtn.style.display = currentQuestionIndex === currentQuizData.questions.length - 1 ? 'block' : 'none';
-
     questionBox.innerHTML = `
         <h3 class="question-text">Question ${currentQuestionIndex + 1} of ${currentQuizData.questions.length}</h3>
         <div class="question-header">
@@ -1253,97 +1299,72 @@ function displayQuestion() {
             `).join('')}
         </div>
     `;
-
     const progress = ((currentQuestionIndex + 1) / currentQuizData.questions.length) * 100;
     document.getElementById('progress-bar').style.width = `${progress}%`;
-
     questionBox.querySelectorAll('.option-button').forEach(button => {
         button.addEventListener('click', () => selectAnswer(button.dataset.index));
     });
-
-    // Add event listener for the speak button
     document.getElementById('speak-btn').addEventListener('click', speakQuizContent);
 }
 
-// <<< MODIFIED: Function to handle Text-to-Speech with Flag
 function speakQuizContent() {
     if (!('speechSynthesis' in window)) {
         showPopup("Sorry, your browser doesn't support Text-to-Speech.", 'error');
         return;
     }
-
     const speakButton = document.getElementById('speak-btn');
     const questionTextElement = document.querySelector('.question-box .question-text:not(h3)');
     const optionButtons = document.querySelectorAll('.option-button');
-
-    // If already speaking, stop it (handles clicking the stop button)
     if (window.speechSynthesis.speaking) {
-        userInitiatedCancel = true; // <<< Set flag
+        userInitiatedCancel = true;
         window.speechSynthesis.cancel();
         return;
     }
-
     const questionText = questionTextElement ? questionTextElement.textContent : '';
     const optionsText = Array.from(optionButtons).map((btn, index) => `Option ${index + 1}: ${btn.textContent}`).join('. ');
     const fullText = `${questionText}. Options are: ${optionsText}`;
     const utterance = new SpeechSynthesisUtterance(fullText);
-
     const clickToStopHandler = (event) => {
-        if (event.target.closest('#speak-btn')) {
-             return;
-        }
+        if (event.target.closest('#speak-btn')) return;
         if (window.speechSynthesis.speaking) {
-            userInitiatedCancel = true; // <<< Set flag
+            userInitiatedCancel = true;
             window.speechSynthesis.cancel();
         }
     };
-
     const cleanupSpeech = () => {
         speakButton.classList.remove('speaking');
         speakButton.innerHTML = '<i class="fas fa-volume-up"></i>';
         speakButton.title = "Read Question";
         document.removeEventListener('click', clickToStopHandler, true);
-        userInitiatedCancel = false; // <<< Reset flag
+        userInitiatedCancel = false;
     };
-
     utterance.onstart = () => {
-        userInitiatedCancel = false; // <<< Ensure flag is false at start
+        userInitiatedCancel = false;
         speakButton.classList.add('speaking');
         speakButton.innerHTML = '<i class="fas fa-stop"></i>';
         speakButton.title = "Stop Reading";
         document.addEventListener('click', clickToStopHandler, true);
     };
-
-    utterance.onend = () => {
-        cleanupSpeech(); // Calls cleanup which resets flag
-    };
-
-     utterance.onerror = (event) => {
+    utterance.onend = cleanupSpeech;
+    utterance.onerror = (event) => {
         console.error('SpeechSynthesisUtterance.onerror', event);
-        // <<< MODIFIED: Only show popup if it wasn't a user cancel
         if (!userInitiatedCancel) {
             showPopup('An error occurred during speech synthesis.', 'error');
         }
-        cleanupSpeech(); // Cleanup regardless
+        cleanupSpeech();
     };
-
     window.speechSynthesis.speak(utterance);
 }
 
-
 function selectAnswer(index) {
-     // Stop speech when an answer is selected
     if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
-        userInitiatedCancel = true; // <<< Set flag
+        userInitiatedCancel = true;
         window.speechSynthesis.cancel();
     }
-
     const question = currentQuizData.questions[currentQuestionIndex];
     const correct = question.options[index] === question.answer;
     userAnswers[currentQuestionIndex] = index;
-
     if (correct) quizScore++;
-
     const buttons = document.querySelectorAll('.option-button');
     buttons.forEach(button => {
         button.disabled = true;
@@ -1354,7 +1375,6 @@ function selectAnswer(index) {
             button.classList.add('correct');
         }
     });
-
     if (currentQuestionIndex === currentQuizData.questions.length - 1) {
         setTimeout(showQuizResults, 1000);
     } else {
@@ -1367,11 +1387,9 @@ function selectAnswer(index) {
 function showQuizResults() {
     showView(scoreView);
     const percentage = (quizScore / currentQuizData.questions.length) * 100;
-
     document.getElementById('total-questions').textContent = currentQuizData.questions.length;
     document.getElementById('correct-answers').textContent = quizScore;
     document.getElementById('final-score').textContent = `${percentage.toFixed(1)}%`;
-
     if (currentUser) {
         saveQuizResult(percentage);
     }
@@ -1392,46 +1410,29 @@ async function saveQuizResult(score) {
     }
 }
 
-// Leaderboard Functions
+// Leaderboard Functions (Unchanged)
 async function loadLeaderboard() {
     const leaderboardList = document.getElementById('leaderboard-list');
     leaderboardList.innerHTML = '<div class="loading-spinner"></div>';
-
     try {
-        const resultsQuery = query(
-            collection(db, "results"),
-            orderBy("score", "desc"),
-            limit(50)
-        );
-
+        const resultsQuery = query(collection(db, "results"), orderBy("score", "desc"), limit(50));
         const resultsSnapshot = await getDocs(resultsQuery);
         const userScores = {};
-
         resultsSnapshot.forEach(doc => {
             const data = doc.data();
             if (!userScores[data.userId] || data.score > userScores[data.userId].score) {
-                userScores[data.userId] = {
-                    name: data.userName,
-                    score: data.score,
-                    quizzesTaken: 1
-                };
+                userScores[data.userId] = { name: data.userName, score: data.score, quizzesTaken: 1 };
             } else {
                 userScores[data.userId].quizzesTaken++;
             }
         });
-
-        const sortedUsers = Object.entries(userScores)
-            .sort(([,a], [,b]) => b.score - a.score)
-            .slice(0, 10);
-
+        const sortedUsers = Object.entries(userScores).sort(([,a], [,b]) => b.score - a.score).slice(0, 10);
         leaderboardList.innerHTML = sortedUsers.map(([userId, data], index) => `
             <div class="leaderboard-item ${userId === currentUser?.uid ? 'current-user' : ''}">
                 <div class="leaderboard-rank ${index < 3 ? `rank-${index + 1}` : ''}">${index + 1}</div>
                 <div class="leaderboard-info">
                     <div class="leaderboard-name">${data.name}</div>
-                    <div class="leaderboard-stats">
-                        ${data.quizzesTaken} quiz${data.quizzesTaken !== 1 ? 'zes' : ''} taken
-                    </div>
+                    <div class="leaderboard-stats">${data.quizzesTaken} quiz${data.quizzesTaken !== 1 ? 'zes' : ''} taken</div>
                 </div>
                 <div class="leaderboard-score">${data.score.toFixed(1)}%</div>
             </div>
@@ -1442,38 +1443,26 @@ async function loadLeaderboard() {
     }
 }
 
-// Profile Functions
+// Profile Functions (Unchanged)
 async function loadProfile() {
     if (!currentUser) return;
-
     const profileAvatar = document.getElementById('profile-avatar');
     const profileName = document.getElementById('profile-name');
     const profileEmail = document.getElementById('profile-email');
     const quizzesTaken = document.getElementById('profile-quizzes-taken');
     const avgScore = document.getElementById('profile-avg-score');
     const bestScore = document.getElementById('profile-best-score');
-
     profileAvatar.textContent = currentUserName.charAt(0).toUpperCase();
     profileName.textContent = currentUserName;
     profileEmail.textContent = currentUser.email;
-
     try {
-        const resultsQuery = query(
-            collection(db, "results"),
-            where("userId", "==", currentUser.uid)
-        );
-
+        const resultsQuery = query(collection(db, "results"), where("userId", "==", currentUser.uid));
         const resultsSnapshot = await getDocs(resultsQuery);
         const scores = [];
-
-        resultsSnapshot.forEach(doc => {
-            scores.push(doc.data().score);
-        });
-
+        resultsSnapshot.forEach(doc => scores.push(doc.data().score));
         if (scores.length > 0) {
             const average = scores.reduce((a, b) => a + b) / scores.length;
             const best = Math.max(...scores);
-
             quizzesTaken.textContent = scores.length;
             avgScore.textContent = `${average.toFixed(1)}%`;
             bestScore.textContent = `${best.toFixed(1)}%`;
@@ -1487,7 +1476,7 @@ async function loadProfile() {
     }
 }
 
-// Event Listeners
+// Event Listeners (Mostly Unchanged)
 document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('email').value;
@@ -1515,107 +1504,53 @@ document.getElementById('show-login').addEventListener('click', (e) => {
     document.getElementById('login-form').classList.remove('hidden');
 });
 
-document.getElementById('back-to-categories').addEventListener('click', () => {
-    showView(categoriesView);
-});
-
-document.getElementById('leaderboard-back').addEventListener('click', () => {
-    showView(categoriesView);
-});
-
-document.getElementById('profile-back').addEventListener('click', () => {
-    showView(categoriesView);
-});
-
-document.getElementById('next-btn').addEventListener('click', () => {
-    currentQuestionIndex++;
-    displayQuestion();
-});
+document.getElementById('back-to-categories').addEventListener('click', () => showView(categoriesView));
+document.getElementById('leaderboard-back').addEventListener('click', () => showView(categoriesView));
+document.getElementById('profile-back').addEventListener('click', () => showView(categoriesView));
+document.getElementById('next-btn').addEventListener('click', () => { currentQuestionIndex++; displayQuestion(); });
 
 document.getElementById('quit-btn').addEventListener('click', () => {
-    // Stop speech when quitting and set flag
     if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
-        userInitiatedCancel = true; // <<< Set flag
+        userInitiatedCancel = true;
         window.speechSynthesis.cancel();
     }
-
     const popup = document.getElementById('custom-popup');
     const closeBtn = popup.querySelector('.popup-close');
     const messageEl = popup.querySelector('.popup-message');
     const iconEl = popup.querySelector('.fas');
-
     messageEl.textContent = 'Are you sure you want to quit the quiz?';
     iconEl.className = 'fas fa-info-circle';
     closeBtn.textContent = 'Yes, Quit';
-
     const cancelBtn = document.createElement('button');
     cancelBtn.className = 'popup-close';
     cancelBtn.style.marginLeft = 'var(--space-2)';
     cancelBtn.style.background = 'var(--gray-500)';
     cancelBtn.textContent = 'Cancel';
-
-    // Ensure only one cancel button exists
     if (!closeBtn.parentNode.querySelector('.popup-close + .popup-close')) {
          closeBtn.parentNode.appendChild(cancelBtn);
     }
-
-
-    const handleQuit = () => {
-        popup.classList.remove('show');
-        showView(categoriesView);
-        cleanup();
-    };
-
-    const handleCancel = () => {
-        popup.classList.remove('show');
-        cleanup();
-    };
-
+    const handleQuit = () => { popup.classList.remove('show'); showView(categoriesView); cleanup(); };
+    const handleCancel = () => { popup.classList.remove('show'); cleanup(); };
     const cleanup = () => {
         closeBtn.removeEventListener('click', handleQuit);
         cancelBtn.removeEventListener('click', handleCancel);
-        if (cancelBtn.parentNode) {
-           cancelBtn.parentNode.removeChild(cancelBtn);
-        }
+        if (cancelBtn.parentNode) cancelBtn.parentNode.removeChild(cancelBtn);
         closeBtn.textContent = 'OK';
     };
-
     closeBtn.addEventListener('click', handleQuit, { once: true });
     cancelBtn.addEventListener('click', handleCancel, { once: true });
-
     popup.classList.add('show');
 });
 
+document.getElementById('try-again').addEventListener('click', () => startQuiz(currentQuizData.id, currentQuizData));
+document.getElementById('back-to-home').addEventListener('click', () => showView(categoriesView));
+document.getElementById('leaderboard-icon').addEventListener('click', () => { showView(leaderboardView); loadLeaderboard(); });
+document.getElementById('profile-icon').addEventListener('click', () => { showView(profileView); loadProfile(); });
+document.getElementById('logout-btn').addEventListener('click', async () => await logout());
 
-document.getElementById('try-again').addEventListener('click', () => {
-    startQuiz(currentQuizData.id, currentQuizData);
-});
+// <<< MODIFIED: Removed initial app view logic >>>
+// The onAuthStateChanged listener now handles the initial view after checking auth.
 
-document.getElementById('back-to-home').addEventListener('click', () => {
-    showView(categoriesView);
-});
-
-document.getElementById('leaderboard-icon').addEventListener('click', () => {
-    showView(leaderboardView);
-    loadLeaderboard();
-});
-
-document.getElementById('profile-icon').addEventListener('click', () => {
-    showView(profileView);
-    loadProfile();
-});
-
-document.getElementById('logout-btn').addEventListener('click', async () => {
-    await logout();
-});
-
-// Initialize app
-if (auth.currentUser) {
-    showView(categoriesView);
-    loadCategories();
-} else {
-    showView(authView);
-}
     </script>
 </body>
 </html>
