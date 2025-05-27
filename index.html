@@ -267,6 +267,19 @@
             position: relative; /* Needed for positioning speak button */
         }
 
+        /* <<< NEW: Question Image Styles >>> */
+        .question-image {
+            width: 100%;
+            height: auto;
+            max-height: 250px; /* Adjust as needed */
+            object-fit: cover; /* Or 'contain' based on preference */
+            border-radius: var(--radius); /* Rounded corners */
+            margin-bottom: var(--space-4); /* Space below image */
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            display: block; /* Ensure it's a block element */
+        }
+
         .question-header {
              display: flex;
              justify-content: space-between;
@@ -1056,7 +1069,7 @@ const quizView = document.getElementById('quiz-view');
 const scoreView = document.getElementById('score-view');
 const leaderboardView = document.getElementById('leaderboard-view');
 const profileView = document.getElementById('profile-view');
-const loadingOverlay = document.getElementById('loading-overlay'); // <<< NEW: Loading Overlay Ref
+const loadingOverlay = document.getElementById('loading-overlay');
 
 // View Management
 function showView(viewToShow) {
@@ -1107,7 +1120,7 @@ const errorMessages = {
     'auth/invalid-login-credentials': 'Invalid email or password.'
 };
 
-// <<< MODIFIED: Auth Event Listener >>>
+// Auth Event Listener
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         currentUser = user;
@@ -1120,18 +1133,17 @@ onAuthStateChanged(auth, async (user) => {
             loadCategories();
         } catch (error) {
             showPopup('Unable to load user data', 'error');
-            showView(authView); // Fallback to auth view on error
+            showView(authView);
         }
     } else {
         currentUser = null;
-        showView(authView); // Show login/register if no user
+        showView(authView);
     }
-    // Hide loading overlay once auth check is complete
     loadingOverlay.classList.remove('show');
     appHeader.classList.toggle('hidden-initial', !user);
 });
 
-// <<< MODIFIED: Login Function with Loading State >>>
+// Login Function
 async function login(email, password) {
     const loginButton = document.querySelector('#login-form button[type="submit"]');
     const originalButtonText = loginButton.textContent;
@@ -1140,17 +1152,15 @@ async function login(email, password) {
 
     try {
         await signInWithEmailAndPassword(auth, email, password);
-        // Let onAuthStateChanged handle the success view change.
-        // It will eventually restore button state if needed, but view change is likely.
     } catch (error) {
         const message = errorMessages[error.code] || 'Unable to login. Please try again.';
         showPopup(message, 'error');
-        loginButton.disabled = false; // Restore button on error
-        loginButton.innerHTML = originalButtonText; // Restore text on error
+        loginButton.disabled = false;
+        loginButton.innerHTML = originalButtonText;
     }
 }
 
-
+// Register Function
 async function register(name, email, password) {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -1160,12 +1170,14 @@ async function register(name, email, password) {
             createdAt: new Date().toISOString()
         });
         showPopup('Registration successful!', 'success');
-    } catch (error) {
+    } catch (error)
+    {
         const message = errorMessages[error.code] || 'Unable to register. Please try again.';
         showPopup(message, 'error');
     }
 }
 
+// Logout Function
 async function logout() {
     try {
         await signOut(auth);
@@ -1179,7 +1191,7 @@ async function logout() {
     }
 }
 
-// Categories Functions (Unchanged)
+// Categories Functions
 async function loadCategories() {
     const categoryGrid = document.getElementById('category-grid-container');
     categoryGrid.innerHTML = '<div class="loading-spinner"></div>';
@@ -1231,7 +1243,7 @@ function createCategoryCard(category, id) {
     document.getElementById('category-grid-container').appendChild(card);
 }
 
-// Quiz List Functions (Unchanged)
+// Quiz List Functions
 async function loadQuizzes(categoryName) {
     showView(quizListView);
     const quizContainer = document.getElementById('quiz-items-container');
@@ -1262,7 +1274,7 @@ function createQuizItem(quiz, id) {
     document.getElementById('quiz-items-container').appendChild(quizElement);
 }
 
-// Quiz Taking Functions (Unchanged - TTS part remains)
+// Quiz Taking Functions
 function startQuiz(id, quiz) {
     currentQuizData = quiz;
     currentQuizData.id = id;
@@ -1273,6 +1285,7 @@ function startQuiz(id, quiz) {
     displayQuestion();
 }
 
+// <<< MODIFIED: Display Question Function to include Image >>>
 function displayQuestion() {
     if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
         userInitiatedCancel = true;
@@ -1282,11 +1295,20 @@ function displayQuestion() {
     const questionBox = document.getElementById('question-box');
     const nextBtn = document.getElementById('next-btn');
     const submitBtn = document.getElementById('submit-btn');
+
     nextBtn.disabled = true;
     nextBtn.style.display = currentQuestionIndex === currentQuizData.questions.length - 1 ? 'none' : 'block';
     submitBtn.style.display = currentQuestionIndex === currentQuizData.questions.length - 1 ? 'block' : 'none';
+
+    // Build the HTML, starting with the image if it exists
+    let imageHtml = '';
+    if (question.imageUrl) {
+        imageHtml = `<img src="${question.imageUrl}" alt="Question Image" class="question-image">`;
+    }
+
     questionBox.innerHTML = `
         <h3 class="question-text">Question ${currentQuestionIndex + 1} of ${currentQuizData.questions.length}</h3>
+        ${imageHtml}
         <div class="question-header">
             <p class="question-text">${question.question}</p>
             <button class="speak-button" id="speak-btn" title="Read Question">
@@ -1299,13 +1321,17 @@ function displayQuestion() {
             `).join('')}
         </div>
     `;
+
     const progress = ((currentQuestionIndex + 1) / currentQuizData.questions.length) * 100;
     document.getElementById('progress-bar').style.width = `${progress}%`;
+
+    // Add event listeners
     questionBox.querySelectorAll('.option-button').forEach(button => {
         button.addEventListener('click', () => selectAnswer(button.dataset.index));
     });
     document.getElementById('speak-btn').addEventListener('click', speakQuizContent);
 }
+
 
 function speakQuizContent() {
     if (!('speechSynthesis' in window)) {
@@ -1376,7 +1402,7 @@ function selectAnswer(index) {
         }
     });
     if (currentQuestionIndex === currentQuizData.questions.length - 1) {
-        setTimeout(showQuizResults, 1000);
+        setTimeout(showQuizResults, 1000); // Show results after a short delay
     } else {
         const nextBtn = document.getElementById('next-btn');
         nextBtn.disabled = false;
@@ -1410,7 +1436,7 @@ async function saveQuizResult(score) {
     }
 }
 
-// Leaderboard Functions (Unchanged)
+// Leaderboard Functions
 async function loadLeaderboard() {
     const leaderboardList = document.getElementById('leaderboard-list');
     leaderboardList.innerHTML = '<div class="loading-spinner"></div>';
@@ -1443,7 +1469,7 @@ async function loadLeaderboard() {
     }
 }
 
-// Profile Functions (Unchanged)
+// Profile Functions
 async function loadProfile() {
     if (!currentUser) return;
     const profileAvatar = document.getElementById('profile-avatar');
@@ -1476,7 +1502,7 @@ async function loadProfile() {
     }
 }
 
-// Event Listeners (Mostly Unchanged)
+// Event Listeners
 document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('email').value;
@@ -1508,6 +1534,8 @@ document.getElementById('back-to-categories').addEventListener('click', () => sh
 document.getElementById('leaderboard-back').addEventListener('click', () => showView(categoriesView));
 document.getElementById('profile-back').addEventListener('click', () => showView(categoriesView));
 document.getElementById('next-btn').addEventListener('click', () => { currentQuestionIndex++; displayQuestion(); });
+document.getElementById('submit-btn').addEventListener('click', showQuizResults); // <<< NEW: Submit button calls showQuizResults
+
 
 document.getElementById('quit-btn').addEventListener('click', () => {
     if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
@@ -1547,9 +1575,6 @@ document.getElementById('back-to-home').addEventListener('click', () => showView
 document.getElementById('leaderboard-icon').addEventListener('click', () => { showView(leaderboardView); loadLeaderboard(); });
 document.getElementById('profile-icon').addEventListener('click', () => { showView(profileView); loadProfile(); });
 document.getElementById('logout-btn').addEventListener('click', async () => await logout());
-
-// <<< MODIFIED: Removed initial app view logic >>>
-// The onAuthStateChanged listener now handles the initial view after checking auth.
 
     </script>
 </body>
