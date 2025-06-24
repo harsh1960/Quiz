@@ -267,7 +267,6 @@
             position: relative; /* Needed for positioning speak button */
         }
 
-        /* <<< NEW: Question Image Styles >>> */
         .question-image {
             width: 100%;
             height: auto;
@@ -414,7 +413,7 @@
             color: var(--gray-900);
         }
 
-        /* Enhanced Leaderboard Styles */
+        /* <<< MODIFIED: Enhanced Leaderboard Styles >>> */
         .leaderboard-view {
             padding: var(--space-4);
         }
@@ -425,7 +424,6 @@
             position: relative; /* Ensure back button is positioned correctly */
             padding-top: var(--space-4);
         }
-
 
         .leaderboard-title {
             font-size: 1.5rem;
@@ -453,29 +451,53 @@
             align-items: center;
             box-shadow: var(--shadow);
             transition: transform var(--transition);
+            position: relative; /* For positioning the rank corner */
+            border: 2px solid transparent; /* Placeholder for rank highlight */
+        }
+        
+        /* Highlight for top 3 ranks */
+        .leaderboard-item.rank-1 { border-color: #FFD700; }
+        .leaderboard-item.rank-2 { border-color: #C0C0C0; }
+        .leaderboard-item.rank-3 { border-color: #CD7F32; }
+
+        .leaderboard-avatar {
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+            margin-right: var(--space-4);
         }
 
-        .leaderboard-rank {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius);
-            background: var(--primary-light);
-            color: var(--white);
+        .leaderboard-avatar-img, .leaderboard-avatar-initials {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .leaderboard-avatar-initials {
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 1.125rem;
-            flex-shrink: 0;
+            color: var(--white);
+            background: var(--primary-light);
+            font-size: 1.5rem;
         }
-
-        .rank-1 { background: linear-gradient(135deg, #FFD700, #FFA500); }
-        .rank-2 { background: linear-gradient(135deg, #C0C0C0, #A9A9A9); }
-        .rank-3 { background: linear-gradient(135deg, #CD7F32, #8B4513); }
+        
+        .leaderboard-rank-corner {
+            position: absolute;
+            top: -1px;
+            right: -1px;
+            background: var(--primary);
+            color: var(--white);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: var(--space-1) var(--space-2);
+            border-radius: 0 var(--radius-lg) 0 var(--radius-sm);
+        }
 
         .leaderboard-info {
             flex: 1;
-            margin-left: var(--space-4);
             overflow: hidden; /* Prevent long names from breaking layout */
         }
 
@@ -500,7 +522,6 @@
             margin-left: var(--space-2);
         }
 
-
         /* Enhanced Profile Styles */
         .profile-view {
             padding: var(--space-4);
@@ -513,10 +534,23 @@
             padding-top: var(--space-4);
         }
 
-        .profile-avatar {
+        .profile-avatar-container {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto var(--space-4);
+            margin-top: var(--space-8);
+        }
+
+        .profile-avatar-img,
+        .profile-avatar-initials {
             width: 80px;
             height: 80px;
             border-radius: 50%;
+            object-fit: cover; /* Ensures the image covers the circle */
+        }
+
+        .profile-avatar-initials {
             background: var(--primary-light);
             color: var(--white);
             display: flex;
@@ -524,8 +558,27 @@
             justify-content: center;
             font-size: 2rem;
             font-weight: 700;
-            margin: 0 auto var(--space-4);
-            margin-top: var(--space-8); /* Adjusted for back button */
+        }
+
+        .edit-avatar-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 28px;
+            height: 28px;
+            background: var(--primary);
+            color: var(--white);
+            border: 2px solid var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .edit-avatar-btn:hover {
+            transform: scale(1.1);
         }
 
         .profile-name {
@@ -984,7 +1037,15 @@
                     <button class="back-button" id="profile-back">
                         <i class="fas fa-arrow-left"></i>
                     </button>
-                    <div class="profile-avatar" id="profile-avatar"></div>
+                    <div class="profile-avatar-container">
+                        <img src="" alt="Profile Picture" id="profile-avatar-img" class="profile-avatar-img hidden">
+                        <div class="profile-avatar-initials" id="profile-avatar-initials"></div>
+                        <button class="edit-avatar-btn" id="edit-avatar-btn" title="Change Picture">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                    </div>
+                    <input type="file" id="avatar-upload-input" class="hidden" accept="image/png, image/jpeg, image/gif">
+
                     <h2 class="profile-name" id="profile-name"></h2>
                     <p class="profile-email" id="profile-email"></p>
                 </div>
@@ -1031,7 +1092,7 @@
     <script type="module">
 // Firebase Imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, getDoc, addDoc, query, where, orderBy, limit, setDoc }
+import { getFirestore, collection, getDocs, doc, getDoc, addDoc, query, where, orderBy, limit, setDoc, updateDoc }
     from "https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword, signOut }
     from "https://www.gstatic.com/firebasejs/11.7.1/firebase-auth.js";
@@ -1045,6 +1106,16 @@ const firebaseConfig = {
     messagingSenderId: "938504563570",
     appId: "1:938504563570:web:a4741a9f52b9795f304beb"
 };
+
+// <<< NEW: Cloudinary Configuration >>>
+// =================================================================================
+// IMPORTANT: REPLACE THESE VALUES WITH YOUR OWN CLOUDINARY DETAILS
+// =================================================================================
+const CLOUDINARY_CLOUD_NAME = "dxb0l7vdv";
+const CLOUDINARY_UPLOAD_PRESET = "video_upload";
+// =================================================================================
+const CLOUDINARY_API_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -1285,7 +1356,6 @@ function startQuiz(id, quiz) {
     displayQuestion();
 }
 
-// <<< MODIFIED: Display Question Function to include Image >>>
 function displayQuestion() {
     if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
         userInitiatedCancel = true;
@@ -1297,10 +1367,9 @@ function displayQuestion() {
     const submitBtn = document.getElementById('submit-btn');
 
     nextBtn.disabled = true;
-    nextBtn.style.display = currentQuestionIndex === currentQuizData.questions.length - 1 ? 'none' : 'block';
-    submitBtn.style.display = currentQuestionIndex === currentQuizData.questions.length - 1 ? 'block' : 'none';
-
-    // Build the HTML, starting with the image if it exists
+    nextBtn.classList.toggle('hidden', currentQuestionIndex === currentQuizData.questions.length - 1);
+    submitBtn.classList.toggle('hidden', currentQuestionIndex !== currentQuizData.questions.length - 1);
+    
     let imageHtml = '';
     if (question.imageUrl) {
         imageHtml = `<img src="${question.imageUrl}" alt="Question Image" class="question-image">`;
@@ -1325,13 +1394,11 @@ function displayQuestion() {
     const progress = ((currentQuestionIndex + 1) / currentQuizData.questions.length) * 100;
     document.getElementById('progress-bar').style.width = `${progress}%`;
 
-    // Add event listeners
     questionBox.querySelectorAll('.option-button').forEach(button => {
         button.addEventListener('click', () => selectAnswer(button.dataset.index));
     });
     document.getElementById('speak-btn').addEventListener('click', speakQuizContent);
 }
-
 
 function speakQuizContent() {
     if (!('speechSynthesis' in window)) {
@@ -1401,12 +1468,12 @@ function selectAnswer(index) {
             button.classList.add('correct');
         }
     });
-    if (currentQuestionIndex === currentQuizData.questions.length - 1) {
-        setTimeout(showQuizResults, 1000); // Show results after a short delay
+    
+    const isLastQuestion = currentQuestionIndex === currentQuizData.questions.length - 1;
+    if (isLastQuestion) {
+        document.getElementById('submit-btn').disabled = false;
     } else {
-        const nextBtn = document.getElementById('next-btn');
-        nextBtn.disabled = false;
-        nextBtn.focus();
+        document.getElementById('next-btn').disabled = false;
     }
 }
 
@@ -1436,86 +1503,149 @@ async function saveQuizResult(score) {
     }
 }
 
-// Leaderboard Functions
+// <<< MODIFIED: Leaderboard Function to fetch and display profile pictures >>>
 async function loadLeaderboard() {
     const leaderboardList = document.getElementById('leaderboard-list');
     leaderboardList.innerHTML = '<div class="loading-spinner"></div>';
     try {
-        const resultsQuery = query(collection(db, "results"), orderBy("score", "desc"), limit(50));
+        // 1. Get all results and aggregate scores
+        const resultsQuery = query(collection(db, "results"), orderBy("score", "desc"));
         const resultsSnapshot = await getDocs(resultsQuery);
-        const userScores = {};
+        const userAggregates = {};
+
         resultsSnapshot.forEach(doc => {
             const data = doc.data();
-            if (!userScores[data.userId] || data.score > userScores[data.userId].score) {
-                userScores[data.userId] = { name: data.userName, score: data.score, quizzesTaken: 1 };
-            } else {
-                userScores[data.userId].quizzesTaken++;
+            if (!userAggregates[data.userId]) {
+                userAggregates[data.userId] = {
+                    userId: data.userId,
+                    name: data.userName,
+                    score: 0,
+                    quizzesTaken: 0
+                };
             }
+            // Use highest score for ranking, not average
+            if (data.score > userAggregates[data.userId].score) {
+                userAggregates[data.userId].score = data.score;
+            }
+            userAggregates[data.userId].quizzesTaken++;
         });
-        const sortedUsers = Object.entries(userScores).sort(([,a], [,b]) => b.score - a.score).slice(0, 10);
-        leaderboardList.innerHTML = sortedUsers.map(([userId, data], index) => `
-            <div class="leaderboard-item ${userId === currentUser?.uid ? 'current-user' : ''}">
-                <div class="leaderboard-rank ${index < 3 ? `rank-${index + 1}` : ''}">${index + 1}</div>
-                <div class="leaderboard-info">
-                    <div class="leaderboard-name">${data.name}</div>
-                    <div class="leaderboard-stats">${data.quizzesTaken} quiz${data.quizzesTaken !== 1 ? 'zes' : ''} taken</div>
+
+        // 2. Sort users by score and take the top 10
+        const sortedUsers = Object.values(userAggregates)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 10);
+
+        // 3. Fetch user documents for the top 10 to get photoURLs
+        if (sortedUsers.length > 0) {
+            const userDocPromises = sortedUsers.map(user => getDoc(doc(db, "users", user.userId)));
+            const userDocs = await Promise.all(userDocPromises);
+
+            userDocs.forEach((userDoc, index) => {
+                if (userDoc.exists()) {
+                    sortedUsers[index].photoURL = userDoc.data().photoURL || null;
+                } else {
+                    sortedUsers[index].photoURL = null;
+                }
+            });
+        }
+
+        // 4. Generate and display the HTML
+        if (sortedUsers.length === 0) {
+            leaderboardList.innerHTML = '<p>No scores recorded yet. Be the first!</p>';
+            return;
+        }
+
+        leaderboardList.innerHTML = sortedUsers.map((data, index) => {
+            const rank = index + 1;
+            const rankClass = rank <= 3 ? `rank-${rank}` : '';
+            
+            const avatarHtml = data.photoURL
+                ? `<img src="${data.photoURL}" alt="${data.name}" class="leaderboard-avatar-img">`
+                : `<div class="leaderboard-avatar-initials">${data.name.charAt(0).toUpperCase()}</div>`;
+
+            return `
+                <div class="leaderboard-item ${rankClass}">
+                    <div class="leaderboard-avatar">${avatarHtml}</div>
+                    <div class="leaderboard-info">
+                        <div class="leaderboard-name">${data.name}</div>
+                        <div class="leaderboard-stats">${data.quizzesTaken} quiz${data.quizzesTaken !== 1 ? 'zes' : ''} taken</div>
+                    </div>
+                    <div class="leaderboard-score">${data.score.toFixed(1)}%</div>
+                    <div class="leaderboard-rank-corner">${rank}</div>
                 </div>
-                <div class="leaderboard-score">${data.score.toFixed(1)}%</div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
+
     } catch (error) {
+        console.error("Error loading leaderboard:", error);
         showPopup('Unable to load leaderboard', 'error');
-        leaderboardList.innerHTML = '<p>Unable to load leaderboard</p>';
+        leaderboardList.innerHTML = '<p>Unable to load leaderboard data. Please try again later.</p>';
     }
 }
 
-// Profile Functions
+// <<< MODIFIED: Profile Function to handle photoURL >>>
 async function loadProfile() {
     if (!currentUser) return;
-    const profileAvatar = document.getElementById('profile-avatar');
+
+    // Get all the new and old DOM elements
+    const profileAvatarImg = document.getElementById('profile-avatar-img');
+    const profileAvatarInitials = document.getElementById('profile-avatar-initials');
     const profileName = document.getElementById('profile-name');
     const profileEmail = document.getElementById('profile-email');
     const quizzesTaken = document.getElementById('profile-quizzes-taken');
     const avgScore = document.getElementById('profile-avg-score');
     const bestScore = document.getElementById('profile-best-score');
-    profileAvatar.textContent = currentUserName.charAt(0).toUpperCase();
+
     profileName.textContent = currentUserName;
     profileEmail.textContent = currentUser.email;
+
     try {
+        // Fetch user data from Firestore
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+        if (userDoc.exists() && userDoc.data().photoURL) {
+            // If photoURL exists, show the image and hide the initials
+            profileAvatarImg.src = userDoc.data().photoURL;
+            profileAvatarImg.classList.remove('hidden');
+            profileAvatarInitials.classList.add('hidden');
+        } else {
+            // Otherwise, show the initials and hide the image tag
+            profileAvatarInitials.textContent = currentUserName.charAt(0).toUpperCase();
+            profileAvatarImg.classList.add('hidden');
+            profileAvatarInitials.classList.remove('hidden');
+        }
+
+        // The rest of the stats logic remains the same
         const resultsQuery = query(collection(db, "results"), where("userId", "==", currentUser.uid));
         const resultsSnapshot = await getDocs(resultsQuery);
-        const scores = [];
-        resultsSnapshot.forEach(doc => scores.push(doc.data().score));
+        const scores = resultsSnapshot.docs.map(doc => doc.data().score);
+
         if (scores.length > 0) {
-            const average = scores.reduce((a, b) => a + b) / scores.length;
+            const average = scores.reduce((a, b) => a + b, 0) / scores.length;
             const best = Math.max(...scores);
             quizzesTaken.textContent = scores.length;
             avgScore.textContent = `${average.toFixed(1)}%`;
             bestScore.textContent = `${best.toFixed(1)}%`;
         } else {
-             quizzesTaken.textContent = 0;
-             avgScore.textContent = `0%`;
-             bestScore.textContent = `0%`;
+            quizzesTaken.textContent = 0;
+            avgScore.textContent = `0%`;
+            bestScore.textContent = `0%`;
         }
     } catch (error) {
+        console.error("Error loading profile:", error);
         showPopup('Unable to load profile data', 'error');
     }
 }
 
+
 // Event Listeners
 document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    await login(email, password);
+    await login(document.getElementById('email').value, document.getElementById('password').value);
 });
 
 document.getElementById('register-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const name = document.getElementById('reg-name').value;
-    const email = document.getElementById('reg-email').value;
-    const password = document.getElementById('reg-password').value;
-    await register(name, email, password);
+    await register(document.getElementById('reg-name').value, document.getElementById('reg-email').value, document.getElementById('reg-password').value);
 });
 
 document.getElementById('show-register').addEventListener('click', (e) => {
@@ -1534,40 +1664,17 @@ document.getElementById('back-to-categories').addEventListener('click', () => sh
 document.getElementById('leaderboard-back').addEventListener('click', () => showView(categoriesView));
 document.getElementById('profile-back').addEventListener('click', () => showView(categoriesView));
 document.getElementById('next-btn').addEventListener('click', () => { currentQuestionIndex++; displayQuestion(); });
-document.getElementById('submit-btn').addEventListener('click', showQuizResults); // <<< NEW: Submit button calls showQuizResults
-
+document.getElementById('submit-btn').addEventListener('click', showQuizResults);
 
 document.getElementById('quit-btn').addEventListener('click', () => {
     if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
         userInitiatedCancel = true;
         window.speechSynthesis.cancel();
     }
-    const popup = document.getElementById('custom-popup');
-    const closeBtn = popup.querySelector('.popup-close');
-    const messageEl = popup.querySelector('.popup-message');
-    const iconEl = popup.querySelector('.fas');
-    messageEl.textContent = 'Are you sure you want to quit the quiz?';
-    iconEl.className = 'fas fa-info-circle';
-    closeBtn.textContent = 'Yes, Quit';
-    const cancelBtn = document.createElement('button');
-    cancelBtn.className = 'popup-close';
-    cancelBtn.style.marginLeft = 'var(--space-2)';
-    cancelBtn.style.background = 'var(--gray-500)';
-    cancelBtn.textContent = 'Cancel';
-    if (!closeBtn.parentNode.querySelector('.popup-close + .popup-close')) {
-         closeBtn.parentNode.appendChild(cancelBtn);
+    // Simple confirmation for now. A more robust popup could be used.
+    if(confirm("Are you sure you want to quit? Your progress will be lost.")){
+        showView(categoriesView);
     }
-    const handleQuit = () => { popup.classList.remove('show'); showView(categoriesView); cleanup(); };
-    const handleCancel = () => { popup.classList.remove('show'); cleanup(); };
-    const cleanup = () => {
-        closeBtn.removeEventListener('click', handleQuit);
-        cancelBtn.removeEventListener('click', handleCancel);
-        if (cancelBtn.parentNode) cancelBtn.parentNode.removeChild(cancelBtn);
-        closeBtn.textContent = 'OK';
-    };
-    closeBtn.addEventListener('click', handleQuit, { once: true });
-    cancelBtn.addEventListener('click', handleCancel, { once: true });
-    popup.classList.add('show');
 });
 
 document.getElementById('try-again').addEventListener('click', () => startQuiz(currentQuizData.id, currentQuizData));
@@ -1575,6 +1682,64 @@ document.getElementById('back-to-home').addEventListener('click', () => showView
 document.getElementById('leaderboard-icon').addEventListener('click', () => { showView(leaderboardView); loadLeaderboard(); });
 document.getElementById('profile-icon').addEventListener('click', () => { showView(profileView); loadProfile(); });
 document.getElementById('logout-btn').addEventListener('click', async () => await logout());
+
+
+// <<< NEW: Functions and Event Listeners for Image Upload >>>
+
+// When the camera icon is clicked, it triggers the hidden file input
+document.getElementById('edit-avatar-btn').addEventListener('click', () => {
+    document.getElementById('avatar-upload-input').click();
+});
+
+// When a file is selected in the input, start the upload process
+document.getElementById('avatar-upload-input').addEventListener('change', async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Show the full-screen loading overlay
+    const loadingMessage = document.querySelector('#loading-overlay .loading-content p');
+    loadingMessage.textContent = 'Uploading picture...';
+    loadingOverlay.classList.add('show');
+
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+        // 1. Upload to Cloudinary
+        const response = await fetch(CLOUDINARY_API_URL, {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!response.ok) {
+            throw new Error('Upload to Cloudinary failed.');
+        }
+
+        const data = await response.json();
+        const imageUrl = data.secure_url; // The URL of the uploaded image
+
+        // 2. Save URL to Firestore
+        const userDocRef = doc(db, "users", currentUser.uid);
+        await updateDoc(userDocRef, { photoURL: imageUrl });
+
+        // 3. Update the UI immediately
+        const profileAvatarImg = document.getElementById('profile-avatar-img');
+        profileAvatarImg.src = imageUrl;
+        profileAvatarImg.classList.remove('hidden');
+        document.getElementById('profile-avatar-initials').classList.add('hidden');
+
+        showPopup('Profile picture updated!', 'success');
+
+    } catch (error) {
+        console.error("Image upload error:", error);
+        showPopup('Could not upload image. Please try again.', 'error');
+    } finally {
+        // Hide the loading overlay
+        loadingOverlay.classList.remove('show');
+        loadingMessage.textContent = 'Checking authentication...'; // Reset message
+    }
+});
 
     </script>
 </body>
